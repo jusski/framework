@@ -1,34 +1,53 @@
 package page;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+
 public class SearchResultsPage extends Page
 {
-    @FindBy(css = ".gsc-webResult.gsc-result")
-    List<WebElement> resultRows;
+    private static Logger log = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
+    
+    private final String searchString;
+    
+    @FindBy(css = ".gsc-webResult.gsc-result b")
+    List<WebElement> resultRowsLink;
+    
+    By resultRowLocator = By.cssSelector(".gsc-webResult.gsc-result");
 
-    public SearchResultsPage()
+    public SearchResultsPage(String searchString)
     {
+        this.searchString = searchString;
         PageFactory.initElements(driver, this);
     }
 
-    public void findResultWithLinkTo(String link)
+    public <T> T findResultWithLinkTo(String link, Class<T> page) throws InstantiationException, IllegalAccessException
     {
-        for(WebElement element : resultRows)
+        for(WebElement element : resultRowsLink)
         {
-            System.out.println(element.getText());
-            System.out.println("****************************************");
+            log.fine(element.getText());
+            if(element.getText().startsWith(searchString))
+            {
+                log.info("Found Link" + element.getText());
+                element.click();
+                return page.newInstance();
+            }
         }
+        
+        return null;
     }
 
     public SearchResultsPage open()
     {
-        sleep().until(ExpectedConditions.visibilityOfAllElements(resultRows));
+        sleep().until(ExpectedConditions.presenceOfAllElementsLocatedBy(resultRowLocator));
         return this;
     }
 

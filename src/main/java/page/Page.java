@@ -2,6 +2,7 @@ package page;
 
 import java.time.Duration;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -9,13 +10,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.LoadableComponent;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 
 import driver.Driver;
 
-public abstract class Page 
+abstract class Page 
 {
     protected int TIME_OUT_IN_SECONDS = 10;
     protected Duration TIMEOUT = Duration.ofSeconds(TIME_OUT_IN_SECONDS);
@@ -23,30 +21,54 @@ public abstract class Page
     
     public abstract boolean isPageStateCorrect();
    
-    public FluentWait<WebDriver> sleep()
+    protected FluentWait<WebDriver> sleep()
     {
         return sleep(TIMEOUT);
     }
     
-    public FluentWait<WebDriver> sleep(Duration timeout)
+    protected FluentWait<WebDriver> sleep(Duration timeout)
     {
        return new FluentWait<WebDriver>(driver)
         .withTimeout(timeout)
-        .pollingEvery(Duration.ofMillis(500))
+        .pollingEvery(Duration.ofMillis(200))
         .ignoring(NoSuchElementException.class);
     }
     
-    public boolean isUrlBeginningWith(String url)
+    protected boolean isUrlBeginningWith(String url)
     {
         return expectedCondition((driver) -> driver.getCurrentUrl().startsWith(url));
     }
     
-    public  ExpectedCondition<Boolean> urlChanges(String currentUrl)
+    protected  ExpectedCondition<Boolean> urlChanges(String currentUrl)
     {
         return ExpectedConditions.not(ExpectedConditions.urlToBe(currentUrl));
     }
     
-    public boolean isDisplayed(WebElement element)
+    protected void clickObscured(WebElement element)
+    {
+        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
+        javaScriptExecutor.executeScript("arguments[0].click();", element);
+    }
+    
+    protected void scrollIntoViewAndClick(WebElement element)
+    {
+        scrollIntoView(element);
+        element.click();
+    }
+    
+    protected void scrollIntoView(WebElement element)
+    {
+        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
+        javaScriptExecutor.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+    }
+    
+    protected void scrollIntoViewTop(WebElement element)
+    {
+        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
+        javaScriptExecutor.executeScript("arguments[0].scrollIntoView();", element);
+    }
+    
+    protected boolean isDisplayed(WebElement element)
     {
         try
         {
@@ -59,7 +81,20 @@ public abstract class Page
         return false;
     }
     
-    public  boolean expectedCondition(ExpectedCondition<Boolean> expectedCondition)
+    protected boolean isEnabled(WebElement element)
+    {
+        try
+        {
+            return element.isEnabled();
+        }
+        catch(TimeoutException | NoSuchElementException e)
+        {
+            
+        }
+        return false;
+    }
+    
+    protected  boolean expectedCondition(ExpectedCondition<Boolean> expectedCondition)
     {
         try
         {

@@ -1,12 +1,10 @@
 package page;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class MainPage extends Page
@@ -16,8 +14,8 @@ public class MainPage extends Page
     @FindBy(css = "form > div > button.devsite-search-button")
     WebElement searchButton;
     
-    @FindBy(css = ".devsite-suggest-wrapper")
-    WebElement searchPopup;
+    @FindBy(css = "form.devsite-search-form")
+    WebElement searchForm;
     
     @FindBy(css = "input.devsite-search-field")
     WebElement searchInput;
@@ -27,16 +25,15 @@ public class MainPage extends Page
         PageFactory.initElements(driver, this);
     }
     
-    public SearchResultsPage invokeSearch(String string)
+    public SearchResultsPage invokeSearch(String string) throws InterruptedException
     {
-        String currentUrl = driver.getCurrentUrl();
-       
-        searchButton.click();
-        sleep().until(ExpectedConditions.visibilityOf(searchInput));
-        searchInput.sendKeys("Google Cloud Platform Pricing Calculator", Keys.ENTER); 
-        sleep().until(urlChanges(currentUrl));
+        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
+        javaScriptExecutor.executeScript("arguments[0].click();", searchButton);
         
-        return new SearchResultsPage().open();
+        searchInput.sendKeys("Google Cloud Platform Pricing Calculator"); 
+        searchForm.submit();
+        
+        return new SearchResultsPage(string).open();
     }
     
     public MainPage open()

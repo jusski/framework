@@ -18,14 +18,12 @@ public class Driver
             {
                 case "chrome":
                 {
-                    WebDriverManager.chromedriver()
-                                    .setup();
+                    WebDriverManager.chromedriver().setup();
                     driver = new ChromeDriver();
                 } break;
                 case "firefox":
                 {
-                    WebDriverManager.firefoxdriver()
-                                    .setup();
+                    WebDriverManager.firefoxdriver().setup();
                     driver = new FirefoxDriver();
                 } break;
                 default:
