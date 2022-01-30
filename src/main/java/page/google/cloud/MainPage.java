@@ -1,4 +1,4 @@
-package page;
+package page.google.cloud;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -6,6 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import page.Page;
 
 public class MainPage extends Page
 {
@@ -27,13 +29,12 @@ public class MainPage extends Page
     
     public SearchResultsPage invokeSearch(String string) throws InterruptedException
     {
-        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
-        javaScriptExecutor.executeScript("arguments[0].click();", searchButton);
-        
+        clickObscured(searchButton); // NOTE obscuring depends on window size
+       
         searchInput.sendKeys("Google Cloud Platform Pricing Calculator"); 
         searchForm.submit();
         
-        return new SearchResultsPage(string).open();
+        return new SearchResultsPage();
     }
     
     public MainPage open()

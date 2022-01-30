@@ -1,4 +1,4 @@
-package page;
+package page.google.cloud;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -11,44 +11,37 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import page.Page;
+
 
 public class SearchResultsPage extends Page
 {
     private static Logger log = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
     
-    private final String searchString;
-    
-    @FindBy(css = ".gsc-webResult.gsc-result b")
+    @FindBy(css = ".gsc-webResult.gsc-result a")
     List<WebElement> resultRowsLink;
     
-    By resultRowLocator = By.cssSelector(".gsc-webResult.gsc-result");
-
-    public SearchResultsPage(String searchString)
+    public SearchResultsPage()
     {
-        this.searchString = searchString;
         PageFactory.initElements(driver, this);
     }
 
     public <T> T findResultWithLinkTo(String link, Class<T> page) throws InstantiationException, IllegalAccessException
     {
+        waitFor(() -> !resultRowsLink.isEmpty());
         for(WebElement element : resultRowsLink)
         {
             log.fine(element.getText());
-            if(element.getText().startsWith(searchString))
+            if(element.getText().startsWith(link))
             {
-                log.info("Found Link" + element.getText());
+                log.fine("Found Link" + element.getText());
                 element.click();
                 return page.newInstance();
             }
         }
-        
-        return null;
-    }
-
-    public SearchResultsPage open()
-    {
-        sleep().until(ExpectedConditions.presenceOfAllElementsLocatedBy(resultRowLocator));
-        return this;
+        T  result = page.newInstance();
+        ((Page) result).isValid = false;
+        return result;
     }
 
     @Override

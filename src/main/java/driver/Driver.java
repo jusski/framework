@@ -8,9 +8,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class Driver
 {
-    private static WebDriver driver;
+    private static CustomWebDriver driver;
 
-    public static WebDriver getInstance()
+    public static CustomWebDriver getInstance()
     {
         if(driver == null)
         {
@@ -19,12 +19,12 @@ public class Driver
                 case "chrome":
                 {
                     WebDriverManager.chromedriver().setup();
-                    driver = new ChromeDriver();
+                    driver = new CustomWebDriver(new ChromeDriver());
                 } break;
                 case "firefox":
                 {
                     WebDriverManager.firefoxdriver().setup();
-                    driver = new FirefoxDriver();
+                    driver = new CustomWebDriver(new FirefoxDriver());
                 } break;
                 default:
                 {

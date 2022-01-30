@@ -1,19 +1,14 @@
-package page;
+package page.google.cloud.calculator.compute.engine;
 
-import java.time.Duration;
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import io.netty.handler.ssl.ApplicationProtocolConfig.SelectedListenerFailureBehavior;
+import page.Page;
 
 public class ComputeEngine extends Page
 {
@@ -70,9 +65,27 @@ public class ComputeEngine extends Page
     @FindBy(css = "div.md-select-menu-container.md-active md-option")
     List<WebElement> selectMenuContainerOptions;
 
+    private int frameId;
+    
     public ComputeEngine()
     {
+        this.frameId = driver.getFrameId();
         PageFactory.initElements(driver, this);
+    }
+    
+    public ComputeEngine invokeSetNumberInstances(int count)
+    {
+        try
+        {
+            scrollIntoViewAndClick(numberOfInstancesInput);
+            numberOfInstancesInput.sendKeys(String.valueOf(count));
+        }
+        catch(NoSuchElementException | TimeoutException e)
+        {
+            return new InvalidComputeEngine();
+        }
+
+        return this;
     }
 
     public ComputeEngine invokeOperationSystemSelectionWith(String value)
@@ -142,11 +155,11 @@ public class ComputeEngine extends Page
         try
         {
             scrollIntoViewAndClick(gpuCheckbox);
-            sleep().until(ignored -> isDisplayed(gpuTypeSelect));
+            waitFor(() -> isDisplayed(gpuTypeSelect));
             scrollIntoViewAndClick(gpuTypeSelect);
             clickSelectionMenuOption(gpuName);
 
-            sleep().until(ignored -> isDisplayed(gpuCountSelect));
+            waitFor(() -> isDisplayed(gpuCountSelect));
             scrollIntoViewAndClick(gpuCountSelect);
             clickSelectionMenuOption(String.valueOf(count));
         }
@@ -207,14 +220,14 @@ public class ComputeEngine extends Page
     {
         try
         {
-            sleep().until(ignored -> selectMenuContainerOptions.stream().anyMatch(e -> e.getText().contains(value)));
+            waitFor(() -> selectMenuContainerOptions.stream().anyMatch(e -> e.getText().contains(value)));
             for(WebElement element : selectMenuContainerOptions)
             {
                 System.out.println(element.getText());
                 if(element.getText().contains(value))
                 {
                     scrollIntoViewAndClick(element);
-                    sleep().until(ignored -> selectMenuContainerOptions.isEmpty());
+                    waitFor(() -> selectMenuContainerOptions.isEmpty());
                     return;
                 }
             }
@@ -229,9 +242,9 @@ public class ComputeEngine extends Page
     {
         try
         {   
-            sleep().until(ignored -> isEnabled(estimateCostForComputeEngineFormButton));
+            waitFor(() -> isEnabled(estimateCostForComputeEngineFormButton));
             scrollIntoViewAndClick(estimateCostForComputeEngineFormButton);
-            sleep().until(ignored -> isDisplayed(emailestimateButton));
+            waitFor(() -> isDisplayed(emailestimateButton));
         }
         catch(NoSuchElementException | TimeoutException e)
         {
@@ -241,21 +254,25 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public EmailEstimate clickEmailEstimate()
+    public EmailEstimateForm clickEmailEstimate()
     {
         scrollIntoViewAndClick(emailestimateButton);
-        return new EmailEstimate();
+        return new EmailEstimateForm(isValid, this);
     }
 
     @Override
     public boolean isPageStateCorrect()
     {
-        return driver.getCurrentUrl()
-                     .startsWith(URL) && computeEngineBlock.isDisplayed();
+        return  isValid &&
+                frameId == driver.getFrameId() &&
+                driver.getCurrentUrl().startsWith(URL) && 
+                computeEngineBlock.isDisplayed();
     }
 
     private class InvalidComputeEngine extends ComputeEngine
     {
+        boolean isValid = false;
+        
         @Override
         public boolean isPageStateCorrect()
         {

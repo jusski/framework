@@ -1,6 +1,8 @@
 package page;
 
 import java.time.Duration;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -11,19 +13,32 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 
+import driver.CustomWebDriver;
 import driver.Driver;
 
-abstract class Page 
+public abstract class Page 
 {
+    protected static Logger log = Logger.getLogger(Page.class.getName()); 
+    
     protected int TIME_OUT_IN_SECONDS = 10;
     protected Duration TIMEOUT = Duration.ofSeconds(TIME_OUT_IN_SECONDS);
-    protected WebDriver driver = Driver.getInstance();
+    protected CustomWebDriver driver = Driver.getInstance();
+    protected FluentWait<WebDriver> fluentWait = sleep();
+    public boolean isValid = true;
     
-    public abstract boolean isPageStateCorrect();
+    public boolean isPageStateCorrect()
+    {
+        return isValid;
+    }
    
     protected FluentWait<WebDriver> sleep()
     {
         return sleep(TIMEOUT);
+    }
+    
+    protected void waitFor(Supplier<Boolean> supplier) throws TimeoutException
+    {
+        fluentWait.until(ignored -> supplier.get());
     }
     
     protected FluentWait<WebDriver> sleep(Duration timeout)
@@ -46,26 +61,42 @@ abstract class Page
     
     protected void clickObscured(WebElement element)
     {
-        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
-        javaScriptExecutor.executeScript("arguments[0].click();", element);
+        if(isValid)
+        {
+            driver.executeScript("arguments[0].click();", element);
+        }
     }
     
     protected void scrollIntoViewAndClick(WebElement element)
     {
-        scrollIntoView(element);
-        element.click();
+        if(isValid)
+        {
+            scrollIntoView(element);
+            if(element.isDisplayed() && element.isEnabled())
+            {
+                element.click();
+            }
+            else
+            {
+                log.warning(String.format("Element: %s is not displayed or enabled", element));
+            }
+        }
     }
     
     protected void scrollIntoView(WebElement element)
     {
-        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
-        javaScriptExecutor.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+        if(isValid)
+        {
+            driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+        }
     }
     
     protected void scrollIntoViewTop(WebElement element)
     {
-        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor) driver;
-        javaScriptExecutor.executeScript("arguments[0].scrollIntoView();", element);
+        if(isValid)
+        {
+            driver.executeScript("arguments[0].scrollIntoView();", element);
+        }
     }
     
     protected boolean isDisplayed(WebElement element)
@@ -76,7 +107,7 @@ abstract class Page
         }
         catch(TimeoutException | NoSuchElementException e)
         {
-            
+            log.fine(e.getLocalizedMessage());
         }
         return false;
     }
@@ -89,7 +120,7 @@ abstract class Page
         }
         catch(TimeoutException | NoSuchElementException e)
         {
-            
+            log.fine(e.getLocalizedMessage());
         }
         return false;
     }
@@ -102,7 +133,7 @@ abstract class Page
         }
         catch(TimeoutException | NoSuchElementException e)
         {
-            
+            log.fine(e.getLocalizedMessage());
         }
         return false;
     }
