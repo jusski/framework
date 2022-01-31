@@ -6,10 +6,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class CustomWebDriver implements WebDriver
+public class CustomWebDriver implements WebDriver 
 {
     private AtomicInteger frameId = new AtomicInteger(0);
     private final WebDriver driver;
@@ -19,6 +21,11 @@ public class CustomWebDriver implements WebDriver
         this.driver = driver;
     }
 
+    public <T> T getScreenshotAs(OutputType<T> target)
+    {
+        return ((TakesScreenshot) driver).getScreenshotAs(target);
+    }
+    
     public int getFrameId()
     {
         return frameId.get();

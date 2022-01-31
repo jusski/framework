@@ -1,6 +1,5 @@
 package driver;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -10,6 +9,10 @@ public class Driver
 {
     private static CustomWebDriver driver;
 
+    
+    /**
+     * Returns singleton WebDriver instance
+     */
     public static CustomWebDriver getInstance()
     {
         if(driver == null)
@@ -34,6 +37,24 @@ public class Driver
         }
 
         return driver;
+    }
+    
+    /**
+     * Creates new WebDriver instance
+     */
+    public static CustomWebDriver newInstance()
+    {
+        shutdown();
+        return getInstance();
+    }
+    
+    public static void shutdown()
+    {
+        if(driver != null)
+        {
+            driver.quit();
+            driver = null;
+        }
     }
 
 }

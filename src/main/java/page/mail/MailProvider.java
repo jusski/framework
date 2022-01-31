@@ -24,8 +24,11 @@ public class MailProvider extends Page
     
     public String emailAddress;
 
+    private String windowHandle;
+
     public MailProvider()
     {
+        this.windowHandle = driver.getWindowHandle();
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
         emailAddress = UUID.randomUUID().toString().substring(0, 15);
     }
@@ -50,13 +53,14 @@ public class MailProvider extends Page
         inboxButton.click();
         waitFor(() -> !driver.getCurrentUrl().equals(currentUrl));
         
-        return new Inbox(getEmailAddress());
+        return new Inbox(getEmailAddress(), windowHandle);
     }
     
     @Override
     public boolean isPageStateCorrect()
     {
         return isValid && 
+               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
                driver.getCurrentUrl().startsWith(URL) &&
                inboxButton.isDisplayed();
     }

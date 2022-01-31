@@ -21,20 +21,23 @@ public class MainPage extends Page
     
     @FindBy(css = "input.devsite-search-field")
     WebElement searchInput;
+
+    private String windowHandle;
     
     public MainPage()
     {
+        this.windowHandle = driver.getWindowHandle();
         PageFactory.initElements(driver, this);
     }
     
-    public SearchResultsPage invokeSearch(String string) throws InterruptedException
+    public SearchResultsPage invokeSearch(String string) 
     {
         clickObscured(searchButton); // NOTE obscuring depends on window size
        
         searchInput.sendKeys("Google Cloud Platform Pricing Calculator"); 
         searchForm.submit();
         
-        return new SearchResultsPage();
+        return new SearchResultsPage(windowHandle);
     }
     
     public MainPage open()
@@ -47,6 +50,8 @@ public class MainPage extends Page
     @Override
     public boolean isPageStateCorrect()
     {
-        return isUrlBeginningWith(URL);
+        return isValid &&
+               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
+               isUrlBeginningWith(URL);
     }
 }

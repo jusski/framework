@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,11 +18,11 @@ import org.openqa.selenium.support.ui.FluentWait;
 import driver.CustomWebDriver;
 import driver.Driver;
 
-public abstract class Page 
+public class Page 
 {
     protected static Logger log = Logger.getLogger(Page.class.getName()); 
     
-    protected int TIME_OUT_IN_SECONDS = 10;
+    protected int TIME_OUT_IN_SECONDS = 15;
     protected Duration TIMEOUT = Duration.ofSeconds(TIME_OUT_IN_SECONDS);
     protected CustomWebDriver driver = Driver.getInstance();
     protected FluentWait<WebDriver> fluentWait = sleep();
@@ -31,6 +33,21 @@ public abstract class Page
         return isValid;
     }
    
+    protected boolean changeToCorrectWindow(String windowHandle)
+    {
+        try
+        {
+            driver.switchTo().window(windowHandle);
+        }
+        catch (NoSuchFrameException | StaleElementReferenceException | NoSuchElementException e)
+        {
+            log.warning("Tried to switch windows and it failed. " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+    
     protected FluentWait<WebDriver> sleep()
     {
         return sleep(TIMEOUT);

@@ -1,14 +1,15 @@
 package page.google.cloud.calculator;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
+import lombok.NoArgsConstructor;
 import page.Page;
 import page.google.cloud.calculator.compute.engine.ComputeEngine;
 
+@NoArgsConstructor
 public class Calculator extends Page
 {
     private final String URL = "https://cloud.google.com/products/calculator";
@@ -21,9 +22,12 @@ public class Calculator extends Page
     
     @FindBy(css = "#myFrame")
     WebElement mainFrame;
+
+    private String windowHandle;
     
-    public Calculator()
+    public Calculator(String windowHandle)
     {
+        this.windowHandle = driver.getWindowHandle();
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
     
@@ -33,7 +37,7 @@ public class Calculator extends Page
         driver.switchTo().frame(mainFrame);
         computeEngine.click();
         
-        return new ComputeEngine();
+        return new ComputeEngine(windowHandle);
     }
     
     public Calculator open()
@@ -46,7 +50,9 @@ public class Calculator extends Page
     @Override
     public boolean isPageStateCorrect()
     {
-        return driver.getCurrentUrl().startsWith(URL);
+        return isValid &&
+                ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
+                driver.getCurrentUrl().startsWith(URL);
     }
 
 }

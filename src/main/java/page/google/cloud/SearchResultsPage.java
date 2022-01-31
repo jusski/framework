@@ -1,6 +1,7 @@
 package page.google.cloud;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -11,6 +12,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import lombok.SneakyThrows;
 import page.Page;
 
 
@@ -20,15 +22,20 @@ public class SearchResultsPage extends Page
     
     @FindBy(css = ".gsc-webResult.gsc-result a")
     List<WebElement> resultRowsLink;
+
+    private String windowHandle;
     
-    public SearchResultsPage()
+    public SearchResultsPage(String windowHandle)
     {
+        this.windowHandle = driver.getWindowHandle();
         PageFactory.initElements(driver, this);
     }
 
-    public <T> T findResultWithLinkTo(String link, Class<T> page) throws InstantiationException, IllegalAccessException
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    public <T extends Page> T findResultWithLinkTo(String link, Class<? extends Page> page) 
     {
-        waitFor(() -> !resultRowsLink.isEmpty());
+        waitFor(() -> !resultRowsLink.isEmpty()); // Note we should know how many results search page should return
         for(WebElement element : resultRowsLink)
         {
             log.fine(element.getText());
@@ -36,10 +43,11 @@ public class SearchResultsPage extends Page
             {
                 log.fine("Found Link" + element.getText());
                 element.click();
-                return page.newInstance();
+                return (T)page.newInstance();
             }
         }
-        T  result = page.newInstance();
+        Constructor<? extends Page> constructor = page.getConstructor(String.class);
+        T  result = (T)constructor.newInstance(windowHandle);
         ((Page) result).isValid = false;
         return result;
     }
@@ -47,7 +55,9 @@ public class SearchResultsPage extends Page
     @Override
     public boolean isPageStateCorrect()
     {
-        return driver.getTitle().startsWith("Search results");
+        return isValid &&
+               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
+               driver.getTitle().startsWith("Search results");
     }
 
 }

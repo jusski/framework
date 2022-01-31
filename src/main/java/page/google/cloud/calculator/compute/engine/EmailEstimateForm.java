@@ -33,11 +33,13 @@ public class EmailEstimateForm extends Page
     WebElement mainFrame;
     
     private int frameId;
+    private String windowHandle;
     
-    public EmailEstimateForm(boolean isValid, ComputeEngine parent)
+    public EmailEstimateForm(boolean isValid, ComputeEngine parent, String windowHandle)
     {
         this.isValid = isValid;
         this.parent = parent;
+        this.windowHandle = windowHandle;
         this.frameId = driver.getFrameId();
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
@@ -76,6 +78,7 @@ public class EmailEstimateForm extends Page
     public boolean isPageStateCorrect()
     {
         return isValid &&
+               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
                driver.getCurrentUrl().startsWith(URL) &&
                ((frameId == driver.getFrameId()) || changeToCorrectFrame()) &&
                emailForm.isDisplayed();
