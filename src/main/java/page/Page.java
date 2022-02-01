@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
+import javax.management.openmbean.InvalidOpenTypeException;
+
+import org.openqa.selenium.InvalidArgumentException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
@@ -17,23 +20,61 @@ import org.openqa.selenium.support.ui.FluentWait;
 
 import driver.CustomWebDriver;
 import driver.Driver;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class Page 
 {
-    protected static Logger log = Logger.getLogger(Page.class.getName()); 
-    
     protected int TIME_OUT_IN_SECONDS = 15;
     protected Duration TIMEOUT = Duration.ofSeconds(TIME_OUT_IN_SECONDS);
     protected CustomWebDriver driver = Driver.getInstance();
     protected FluentWait<WebDriver> fluentWait = sleep();
+    protected String windowHandle = driver.getWindowHandle();
+    protected int frameId = driver.getFrameId();
     public boolean isValid = true;
+    
+    private String URL = driver.getCurrentUrl();
+    
+       
+    protected void get(String url)
+    {
+        driver.get(url);
+        this.URL = url;
+    }
     
     public boolean isPageStateCorrect()
     {
-        return isValid;
+        return isValid && 
+               isBrowserWindowCorrect() &&
+               driver.getCurrentUrl().startsWith(URL) &&
+               isPageAttributesCorrect();
     }
-   
-    protected boolean changeToCorrectWindow(String windowHandle)
+    
+    protected boolean isPageAttributesCorrect()
+    {
+        return true;
+    }
+
+    protected boolean isIFrameCorrect()
+    {
+        return ((driver.getFrameId() == frameId) || changeToCorrectFrame());
+    }
+
+    protected boolean changeToCorrectFrame()
+    {
+        throw new InvalidArgumentException("This method should be overrided.");
+    }
+    
+    protected boolean isBrowserWindowCorrect()
+    {
+        if(driver.getWindowHandle().equals(windowHandle))
+        {
+            return true;
+        }
+        return changeToCorrectWindow(windowHandle);
+    }
+    
+    private boolean changeToCorrectWindow(String windowHandle)
     {
         try
         {
@@ -41,7 +82,7 @@ public class Page
         }
         catch (NoSuchFrameException | StaleElementReferenceException | NoSuchElementException e)
         {
-            log.warning("Tried to switch windows and it failed. " + e.getMessage());
+            log.error("Tried to switch windows and it failed. ", e);
             return false;
         }
 
@@ -76,14 +117,17 @@ public class Page
         return ExpectedConditions.not(ExpectedConditions.urlToBe(currentUrl));
     }
     
-    protected void clickObscured(WebElement element)
+    protected WebElement clickObscured(WebElement element)
     {
         if(isValid)
         {
             driver.executeScript("arguments[0].click();", element);
+            log.warn("Clicked obscured {}", element);
         }
+        
+        return element;
     }
-    
+ 
     protected void scrollIntoViewAndClick(WebElement element)
     {
         if(isValid)
@@ -95,25 +139,30 @@ public class Page
             }
             else
             {
-                log.warning(String.format("Element: %s is not displayed or enabled", element));
+                isValid = false;
+                log.error(String.format("Element: %s is not displayed or enabled", element));
             }
         }
     }
     
-    protected void scrollIntoView(WebElement element)
+    protected WebElement scrollIntoView(WebElement element)
     {
         if(isValid)
         {
             driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
         }
+        
+        return element;
     }
     
-    protected void scrollIntoViewTop(WebElement element)
+    protected WebElement scrollIntoViewTop(WebElement element)
     {
         if(isValid)
         {
             driver.executeScript("arguments[0].scrollIntoView();", element);
         }
+        
+        return element;
     }
     
     protected boolean isDisplayed(WebElement element)
@@ -124,7 +173,7 @@ public class Page
         }
         catch(TimeoutException | NoSuchElementException e)
         {
-            log.fine(e.getLocalizedMessage());
+            log.trace(e.getMessage());
         }
         return false;
     }
@@ -137,7 +186,7 @@ public class Page
         }
         catch(TimeoutException | NoSuchElementException e)
         {
-            log.fine(e.getLocalizedMessage());
+            log.trace(e.getLocalizedMessage());
         }
         return false;
     }
@@ -150,16 +199,8 @@ public class Page
         }
         catch(TimeoutException | NoSuchElementException e)
         {
-            log.fine(e.getLocalizedMessage());
+            log.trace(e.getLocalizedMessage());
         }
         return false;
     }
-    
-//    @Override
-//    protected void isLoaded() throws Error
-//    {
-//        Assert.assertTrue(isPageStateCorrect());
-//    }
-//    
-    
 }

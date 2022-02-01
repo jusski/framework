@@ -2,21 +2,25 @@ package page.google.cloud.calculator.compute.engine;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import page.Page;
 import page.google.cloud.calculator.compute.engine.model.ComputeEngineModel;
 import page.util.Exceptions;
 
-@NoArgsConstructor
-public class ComputeEngine extends Page
+@Log4j2
+public class ComputeEnginePage extends Page
 {
     private final String URL = "https://cloud.google.com/products/calculator";
 
@@ -74,22 +78,22 @@ public class ComputeEngine extends Page
     @FindBy(css = "div.md-select-menu-container.md-active md-option")
     List<WebElement> selectMenuContainerOptions;
 
-    private int frameId;
-
-    private String windowHandle;
+    @FindBy(css = "devsite-iframe > iframe")
+    WebElement outerFrame;
     
-    public ComputeEngine(String windowHandle)
-    { 
-        this.windowHandle = driver.getWindowHandle();
-        this.frameId = driver.getFrameId();
+    @FindBy(css = "#myFrame")
+    WebElement mainFrame;
+    
+    public ComputeEnginePage()
+    {
         PageFactory.initElements(driver, this);
     }
     
-    public ComputeEngine fillFieldsFromModel(ComputeEngineModel model)
+    public ComputeEnginePage fillFieldsFromModel(ComputeEngineModel model)
     {
         if(isPageStateCorrect())
         {
-            ComputeEngine computeEngine = setNumberInstances(model.getNumberOfInstances())
+            ComputeEnginePage computeEngine = setNumberInstances(model.getNumberOfInstances())
                     .setOerationSystem(model.getOperatingSystem())
                     .setMachineClass(model.getMachineClass())
                     .setSeries(model.getSeries())
@@ -105,7 +109,7 @@ public class ComputeEngine extends Page
         return this;
     }
     
-    public ComputeEngine setNumberInstances(int count)
+    public ComputeEnginePage setNumberInstances(int count)
     {
         if(isValid)
         {
@@ -116,7 +120,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%d], exception was caught: %s", count, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%d], exception was caught: %s", count, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -125,7 +129,7 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public ComputeEngine setOerationSystem(String value)
+    public ComputeEnginePage setOerationSystem(String value)
     {
         if(isValid && Objects.nonNull(value))
         {
@@ -136,7 +140,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -145,7 +149,7 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public ComputeEngine setMachineClass(String value)
+    public ComputeEnginePage setMachineClass(String value)
     {
         if(isValid && Objects.nonNull(value))
         {
@@ -156,7 +160,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -166,7 +170,7 @@ public class ComputeEngine extends Page
 
     
 
-    public ComputeEngine setSeries(String value)
+    public ComputeEnginePage setSeries(String value)
     {
         if(isValid && Objects.nonNull(value))
         {
@@ -177,7 +181,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -185,7 +189,7 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public ComputeEngine setMachineType(String value)
+    public ComputeEnginePage setMachineType(String value)
     {
         if(isValid && Objects.nonNull(value))
         {
@@ -196,7 +200,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -204,7 +208,7 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public ComputeEngine addGPU(String gpuName, int count)
+    public ComputeEnginePage addGPU(String gpuName, int count)
     {
         if(isValid && Objects.nonNull(gpuName))
         {
@@ -221,7 +225,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s, %d], exception was caught: %s", gpuName, count, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s, %d], exception was caught: %s", gpuName, count, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -229,7 +233,7 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public ComputeEngine addSsd(String value)
+    public ComputeEnginePage addSsd(String value)
     {
         if(isValid && Objects.nonNull(value))
         {
@@ -240,7 +244,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -248,7 +252,7 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public ComputeEngine setDataCenterLocation(String value)
+    public ComputeEnginePage setDataCenterLocation(String value)
     {
         if(isValid && Objects.nonNull(value))
         {
@@ -259,7 +263,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -267,7 +271,7 @@ public class ComputeEngine extends Page
         return this;
     }
 
-    public ComputeEngine setCommitedUsage(String value)
+    public ComputeEnginePage setCommitedUsage(String value)
     {
         if(isValid && Objects.nonNull(value))
         {
@@ -278,7 +282,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
 
                 return new InvalidComputeEngine();
             }
@@ -294,7 +298,6 @@ public class ComputeEngine extends Page
             waitFor(() -> selectMenuContainerOptions.stream().anyMatch(e -> e.getText().contains(value)));
             for(WebElement element : selectMenuContainerOptions)
             {
-                System.out.println(element.getText());
                 if(element.getText().contains(value))
                 {
                     scrollIntoViewAndClick(element);
@@ -309,9 +312,9 @@ public class ComputeEngine extends Page
         }
     }
 
-    public ComputeEngine clickAddToEstimate()
+    public ComputeEnginePage clickAddToEstimate()
     {
-        if(isValid)
+        if(isPageStateCorrect())
         {
             try
             {   
@@ -321,7 +324,7 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("Exception was caught: %s", Exceptions.printStackTraceToString(e)));
+                log.error("Exception was caught. ", e);
 
                 return new InvalidComputeEngine();
             }
@@ -331,25 +334,30 @@ public class ComputeEngine extends Page
     
     public String returnEstimatedCost()
     {
-        if(isValid)
+        if(isPageStateCorrect())
         {
             try
             {
-                return totalEstimatedCostText.getText();
+                scrollIntoView(totalEstimatedCostText);
+                
+                Matcher matcher = Pattern.compile("\\ +Cost:[\\D]+\\ +([\\d,.]+)")
+                        .matcher(totalEstimatedCostText.getText());
+                matcher.find();
+                log.trace("Estimated cost in usd: {}", matcher.group(1));
+                return matcher.group(1);
             }
             catch(NoSuchElementException | TimeoutException e)
             {
-                log.severe(String.format("Exception was caught: %s", Exceptions.printStackTraceToString(e)));
-
+                log.error(String.format("Exception was caught: %s", Exceptions.printStackTraceToString(e)));
             }
         }
         
-        return "";
+        return null;
     }
 
-    public EmailEstimateForm clickEmailEstimate()
+    public EmailEstimateFormPage clickEmailEstimate()
     {
-        if(isValid)
+        if(isPageStateCorrect())
         {
             try
             {
@@ -357,25 +365,39 @@ public class ComputeEngine extends Page
             }
             catch(NoSuchElementException | ElementClickInterceptedException e)
             {
-                log.severe(String.format("Exception was caught: %s", Exceptions.printStackTraceToString(e)));
+                log.error("Exception was caught. ", e);
                 isValid = false;
             }
         }
-        return new EmailEstimateForm(isValid, this, windowHandle);
+        return new EmailEstimateFormPage(isValid, this);
     }
 
     @Override
-    public boolean isPageStateCorrect()
+    public boolean isPageAttributesCorrect()
     {
-        return  isValid &&
-                ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
-                frameId == driver.getFrameId() &&
-                driver.getCurrentUrl().startsWith(URL) && 
-                computeEngineBlock.isDisplayed();
+        return isIFrameCorrect() &&
+               computeEngineBlock.isDisplayed();
+    }
+    
+    @Override
+    protected boolean changeToCorrectFrame()
+    {
+        try
+        {
+            driver.switchTo().defaultContent();
+            driver.switchTo().frame(outerFrame).switchTo().frame(mainFrame); 
+            frameId = driver.getFrameId();
+        }
+        catch (NoSuchFrameException | StaleElementReferenceException | NoSuchElementException e)
+        {
+            log.warn("Tried to switch frames and it failed. ", e);
+            return false;
+        }
+
+        return true;
     }
 
-    @NoArgsConstructor
-    private class InvalidComputeEngine extends ComputeEngine
+    private class InvalidComputeEngine extends ComputeEnginePage
     {
         boolean isValid = false;
         

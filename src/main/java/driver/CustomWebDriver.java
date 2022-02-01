@@ -3,6 +3,7 @@ package driver;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -26,9 +27,27 @@ public class CustomWebDriver implements WebDriver
         return ((TakesScreenshot) driver).getScreenshotAs(target);
     }
     
+    public void executeScript(String string, WebElement element)
+    {
+        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor)driver;
+        javaScriptExecutor.executeScript(string, element);
+    }
+    
+    @Override
+    public TargetLocator switchTo()
+    {
+        frameId.incrementAndGet();
+        return driver.switchTo();
+    }
+
     public int getFrameId()
     {
         return frameId.get();
+    }
+    
+    public void get(Supplier<String> url)
+    {
+        this.get(url.get());
     }
     
     @Override
@@ -91,13 +110,7 @@ public class CustomWebDriver implements WebDriver
        return driver.getWindowHandle();
     }
 
-    @Override
-    public TargetLocator switchTo()
-    {
-        frameId.incrementAndGet();
-        return driver.switchTo();
-    }
-
+   
     @Override
     public Navigation navigate()
     {
@@ -110,11 +123,7 @@ public class CustomWebDriver implements WebDriver
         return driver.manage();
     }
 
-    public void executeScript(String string, WebElement element)
-    {
-        JavascriptExecutor javaScriptExecutor = (JavascriptExecutor)driver;
-        javaScriptExecutor.executeScript(string, element);
-    }
+   
 
   
 

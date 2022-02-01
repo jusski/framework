@@ -1,11 +1,8 @@
 package page.google.cloud;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import page.Page;
 
@@ -22,11 +19,9 @@ public class MainPage extends Page
     @FindBy(css = "input.devsite-search-field")
     WebElement searchInput;
 
-    private String windowHandle;
     
     public MainPage()
     {
-        this.windowHandle = driver.getWindowHandle();
         PageFactory.initElements(driver, this);
     }
     
@@ -42,16 +37,7 @@ public class MainPage extends Page
     
     public MainPage open()
     {
-        driver.get(URL);
-       
+        get(URL);
         return this;
-    }
-    
-    @Override
-    public boolean isPageStateCorrect()
-    {
-        return isValid &&
-               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
-               isUrlBeginningWith(URL);
     }
 }

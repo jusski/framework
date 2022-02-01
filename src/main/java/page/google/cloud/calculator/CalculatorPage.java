@@ -7,10 +7,10 @@ import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import lombok.NoArgsConstructor;
 import page.Page;
-import page.google.cloud.calculator.compute.engine.ComputeEngine;
+import page.google.cloud.calculator.compute.engine.ComputeEnginePage;
 
-@NoArgsConstructor
-public class Calculator extends Page
+
+public class CalculatorPage extends Page
 {
     private final String URL = "https://cloud.google.com/products/calculator";
     
@@ -23,36 +23,30 @@ public class Calculator extends Page
     @FindBy(css = "#myFrame")
     WebElement mainFrame;
 
-    private String windowHandle;
-    
-    public Calculator(String windowHandle)
+    public CalculatorPage() 
     {
-        this.windowHandle = driver.getWindowHandle();
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
     
-    public ComputeEngine invokeComputeEngine()
+    public ComputeEnginePage invokeComputeEngine()
     {
-        driver.switchTo().frame(outerFrame);
-        driver.switchTo().frame(mainFrame);
-        computeEngine.click();
+        if(isPageStateCorrect())
+        {
+            driver.switchTo().frame(outerFrame);
+            driver.switchTo().frame(mainFrame);
+            computeEngine.click();
+
+            return new ComputeEnginePage();
+        }
         
-        return new ComputeEngine(windowHandle);
+        return null;
     }
     
-    public Calculator open()
+    public CalculatorPage open()
     {
-        driver.get(URL);
+        get(URL);
         
         return this;
-    }
-    
-    @Override
-    public boolean isPageStateCorrect()
-    {
-        return isValid &&
-                ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
-                driver.getCurrentUrl().startsWith(URL);
     }
 
 }

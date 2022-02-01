@@ -3,20 +3,18 @@ package page.mail;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import page.Page;
-import page.mail.Mail.InvalidMail;
+import page.mail.MailPage.InvalidMail;
 
-@NoArgsConstructor
-public class Inbox extends Page
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class InboxPage extends Page
 {
     private String URL = "https://yopmail.com/en/wm";
     
@@ -30,16 +28,15 @@ public class Inbox extends Page
     WebElement refreshButton;
 
     private String emailAddress;
-    private String windowHandle;
     
-    public Inbox(String emailAddress, String windowHandle)
+    public InboxPage(String emailAddress)
     {
         this.emailAddress = emailAddress;
-        this.windowHandle = windowHandle;
+
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
     
-    private Inbox refresh()
+    private InboxPage refresh()
     {
         refreshButton.click();
         waitFor(() -> refreshButton.getAttribute("loading") == null);
@@ -47,7 +44,7 @@ public class Inbox extends Page
         return this;
     }
     
-    public Mail waitForEmailArrival(Duration timeout)
+    public MailPage waitForEmailArrival(Duration timeout)
     {
         if(isPageStateCorrect())
         {
@@ -66,7 +63,7 @@ public class Inbox extends Page
                 }
             }
             
-            return new Mail(windowHandle);
+            return new MailPage();
         }
   
        return new InvalidMail();  
@@ -78,15 +75,12 @@ public class Inbox extends Page
     }
     
     @Override
-    public boolean isPageStateCorrect()
+    public boolean isPageAttributesCorrect()
     {
-        return isValid && 
-               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
-               driver.getCurrentUrl().startsWith(URL) &&
-               refreshButton.isDisplayed();
+        return refreshButton.isDisplayed();
     }
 
-    private class InvalidInbox extends Inbox
+    private class InvalidInbox extends InboxPage
     {
         boolean isValid = false;
         

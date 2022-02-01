@@ -10,59 +10,61 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import page.Page;
+import page.util.Exceptions;
 
-@NoArgsConstructor
-public class Mail extends Page
+@Log4j2
+public class MailPage extends Page
 {
     private String URL = "https://yopmail.com/en/wm";
-    
+
     @FindBy(css = "#mail")
     WebElement mailBody;
-   
-    private String windowHandle;
-    
-    public Mail(String windowHandle)
+
+    @FindBy(css = "iframe#ifmail")
+    WebElement mailBodyFrame;
+
+    public MailPage()
     {
-       this.windowHandle = windowHandle;
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
-    
+
     public String getMailBody()
     {
         if(isPageStateCorrect())
         {
-            try
-            {
-                return mailBody.getText();
-            }
-            catch (TimeoutException e)
-            {
-                log.warning(e.getMessage());
-            }
+            return mailBody.getText();
         }
-        
-        return "";
+
+        return null;
     }
-    
+
     @Override
-    public boolean isPageStateCorrect()
+    public boolean isPageAttributesCorrect()
     {
-        return isValid && 
-               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
-               driver.getCurrentUrl().startsWith(URL) &&
+        return isIFrameCorrect() &&
                mailBody.isDisplayed();
     }
 
-   
-    @NoArgsConstructor
-    static class InvalidMail extends Mail
+    @Override
+    protected boolean changeToCorrectFrame()
     {
-        public InvalidMail(String windowHandle)
+        try
         {
-            super(windowHandle);
+            driver.switchTo().defaultContent();
+            driver.switchTo().frame(mailBodyFrame);
+        } catch (NoSuchFrameException | StaleElementReferenceException | NoSuchElementException e)
+        {
+            log.error("Tried to switch frames and it failed. ", e);
+            return false;
         }
 
+        return true;
+    }
+
+    static class InvalidMail extends MailPage
+    {
         @Override
         public boolean isPageStateCorrect()
         {

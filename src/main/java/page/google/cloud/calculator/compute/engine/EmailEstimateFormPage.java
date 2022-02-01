@@ -8,14 +8,16 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import page.Page;
 
-@NoArgsConstructor
-public class EmailEstimateForm extends Page
+@Log4j2
+public class EmailEstimateFormPage extends Page
 {
     String URL = "https://cloud.google.com/products/calculator#id";
-    ComputeEngine parent;
+    ComputeEnginePage parent;
     
     @FindBy(css = "form[name='emailForm']")
     WebElement emailForm;
@@ -32,19 +34,15 @@ public class EmailEstimateForm extends Page
     @FindBy(css = "#myFrame")
     WebElement mainFrame;
     
-    private int frameId;
-    private String windowHandle;
     
-    public EmailEstimateForm(boolean isValid, ComputeEngine parent, String windowHandle)
+    public EmailEstimateFormPage(boolean isValid, ComputeEnginePage parent)
     {
         this.isValid = isValid;
         this.parent = parent;
-        this.windowHandle = windowHandle;
-        this.frameId = driver.getFrameId();
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
     
-    public EmailEstimateForm enterEmailAddress(String email)
+    public EmailEstimateFormPage enterEmailAddress(String email)
     {
         if(isPageStateCorrect())
         {
@@ -53,13 +51,13 @@ public class EmailEstimateForm extends Page
         }
         else
         {
-            return new InvalidEmailEstimateForm();
+            return new InvalidEmailEstimateForm(false, parent);
         }
         
         return this;
     }
     
-    public ComputeEngine clickSendButton()
+    public ComputeEnginePage clickSendButton()
     {
         if(isPageStateCorrect())
         {
@@ -75,33 +73,38 @@ public class EmailEstimateForm extends Page
     }
     
     @Override
-    public boolean isPageStateCorrect()
+    public boolean isPageAttributesCorrect()
     {
-        return isValid &&
-               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
-               driver.getCurrentUrl().startsWith(URL) &&
-               ((frameId == driver.getFrameId()) || changeToCorrectFrame()) &&
+        return isIFrameCorrect() &&
                emailForm.isDisplayed();
     }
     
-    private boolean changeToCorrectFrame()
+    @Override
+    protected boolean changeToCorrectFrame()
     {
         try
         {
+            driver.switchTo().defaultContent();
             driver.switchTo().frame(outerFrame).switchTo().frame(mainFrame); 
             frameId = driver.getFrameId();
         }
         catch (NoSuchFrameException | StaleElementReferenceException | NoSuchElementException e)
         {
-            log.warning("Tried to switch frames and it failed. " + e.getMessage());
+            log.error("Tried to switch frames and it failed. ", e);
             return false;
         }
 
         return true;
     }
 
-    static class InvalidEmailEstimateForm extends EmailEstimateForm
+    static class InvalidEmailEstimateForm extends EmailEstimateFormPage
     {
+        public InvalidEmailEstimateForm(boolean isValid, ComputeEnginePage parent)
+        {
+            super(false, parent);
+            // TODO Auto-generated constructor stub
+        }
+
         @Override
         public boolean isPageStateCorrect()
         {

@@ -3,16 +3,19 @@ package page.mail;
 import java.util.UUID;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
+import com.google.common.base.Supplier;
+
 import page.Page;
 
-public class MailProvider extends Page
+public class MailProviderPage extends Page
 {
-    private String URL = "https://yopmail.com/en/";
-    
+    String URL = "https://yopmail.com/en/";
+  
     @FindBy(css = "input#login.ycptinput")
     WebElement emailAddressInput;
     
@@ -24,18 +27,24 @@ public class MailProvider extends Page
     
     public String emailAddress;
 
-    private String windowHandle;
-
-    public MailProvider()
+    public MailProviderPage()
     {
-        this.windowHandle = driver.getWindowHandle();
-        PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
+        this(true);
+    }
+    
+    public MailProviderPage(boolean switchToNewTab)
+    {
+        if(switchToNewTab) driver.switchTo().newWindow(WindowType.TAB);
+
+        windowHandle = driver.getWindowHandle();
         emailAddress = UUID.randomUUID().toString().substring(0, 15);
+      
+        PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
 
-    public MailProvider open()
+    public MailProviderPage open()
     {
-        driver.get(URL);
+        get(URL);
         cookiesBannerAcceptButton.click();
         emailAddressInput.click();
         emailAddressInput.sendKeys(emailAddress);
@@ -47,22 +56,19 @@ public class MailProvider extends Page
         return emailAddress + "@YOPmail.com";
     }
 
-    public Inbox openInbox()
+    public InboxPage openInbox()
     {
         String currentUrl = driver.getCurrentUrl();
         inboxButton.click();
         waitFor(() -> !driver.getCurrentUrl().equals(currentUrl));
         
-        return new Inbox(getEmailAddress(), windowHandle);
+        return new InboxPage(getEmailAddress());
     }
     
     @Override
-    public boolean isPageStateCorrect()
+    public boolean isPageAttributesCorrect()
     {
-        return isValid && 
-               ((driver.getWindowHandle().equals(windowHandle)) || (changeToCorrectWindow(windowHandle))) &&
-               driver.getCurrentUrl().startsWith(URL) &&
-               inboxButton.isDisplayed();
+        return inboxButton.isDisplayed();
     }
     
 }
