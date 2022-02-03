@@ -13,6 +13,7 @@ public class ComputeEngineModelCreator
     @SneakyThrows
     public static ComputeEngineModel withValuesFromYAML(File file)
     {
+        //TODO change to properties
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         return mapper.readValue(file, ComputeEngineModel.class);
     }

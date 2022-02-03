@@ -34,7 +34,7 @@ public class Main
                 .enterEmailAddress(inbox.getEmailAddress())
                 .clickSendButton();
 
-        MailPage mail = inbox.waitForEmailArrival(Duration.ofMillis(2));
+        MailPage mail = inbox.waitForEmailArrival(Duration.ofMinutes(2));
         String mailBody = mail.getMailBody();
         System.out.println(mailBody);
        

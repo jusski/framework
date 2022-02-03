@@ -10,9 +10,11 @@ import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import page.Page;
 import page.mail.MailPage.InvalidMail;
 
+@Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InboxPage extends Page
 {
@@ -36,7 +38,7 @@ public class InboxPage extends Page
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, TIME_OUT_IN_SECONDS), this);
     }
     
-    private InboxPage refresh()
+    private InboxPage refreshInbox()
     {
         refreshButton.click();
         waitFor(() -> refreshButton.getAttribute("loading") == null);
@@ -51,7 +53,7 @@ public class InboxPage extends Page
             Instant endTime = Instant.now().plus(timeout);
             while(true)
             {
-                refresh();
+                refreshInbox();
                 if(!messageCountText.getText().equals("This inbox is empty"))
                 {
                     driver.switchTo().frame(mailBodyFrame);
@@ -59,6 +61,7 @@ public class InboxPage extends Page
                 }
                 if(Instant.now().isAfter(endTime))
                 {
+                    log.error("Timeout.");
                     return new InvalidMail();
                 }
             }
@@ -83,6 +86,11 @@ public class InboxPage extends Page
     private class InvalidInbox extends InboxPage
     {
         boolean isValid = false;
+        
+        public  InvalidInbox()
+        {
+            log.error("Invalid Inbox was created");
+        }
         
         @Override
         public boolean isPageStateCorrect()

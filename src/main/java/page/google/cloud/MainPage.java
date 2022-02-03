@@ -4,8 +4,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import lombok.extern.log4j.Log4j2;
 import page.Page;
 
+@Log4j2
 public class MainPage extends Page
 {
     private final String URL = "https://cloud.google.com/";
@@ -27,6 +29,7 @@ public class MainPage extends Page
     
     public SearchResultsPage invokeSearch(String string) 
     {
+        log.trace("Searching for {}", string);
         clickObscured(searchButton); // NOTE obscuring depends on window size
        
         searchInput.sendKeys("Google Cloud Platform Pricing Calculator"); 

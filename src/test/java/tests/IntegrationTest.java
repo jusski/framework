@@ -4,9 +4,7 @@ import java.time.Duration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 
-import page.Page;
 import page.google.cloud.MainPage;
 import page.google.cloud.calculator.CalculatorPage;
 import page.google.cloud.calculator.compute.engine.ComputeEnginePage;
@@ -18,74 +16,65 @@ import tests.dataproviders.ComputeEngineModelDataProvider;
 
 public class IntegrationTest extends AbstractTest
 {
-    @Test(description = "Should find link to 'Google Cloud Platform Pricing Calculator' after entering " + 
-                        "'Google Cloud Platform Pricing Calculator' in search field of google.cloud page")
-    public void shouldFindSearchTermOnFirstPageOfSearchResults() throws InstantiationException, IllegalAccessException, InterruptedException
-    {
-        Page page = new MainPage().open()
-                .invokeSearch("Google Cloud Platform Pricing Calculator")
-                .findResultWithLinkTo("Google Cloud Platform Pricing Calculator", Page.class);
-
-//        Assert.assertTrue(page.isPageStateCorrect());
-    }
-
-    @Test(dependsOnMethods = "shouldFindSearchTermOnFirstPageOfSearchResults",
-          description = "Should successfully open cloud platform pricing calulator link")
+    private InboxPage inbox;
+    private ComputeEnginePage computeEngine;
+    private String estimatedCost;
+    
+    @Test(description = "Should successfully open cloud platform pricing calulator link")
     public void shouldFindCloudCalculatorOnSearchResults()
     {
-        CalculatorPage calculator = new MainPage().open()
+        CalculatorPage calculator = new MainPage()
+                .open()
                 .invokeSearch("Google Cloud Platform Pricing Calculator")
                 .findResultWithLinkTo("Google Cloud Platform Pricing Calculator", CalculatorPage.class);
 
         Assert.assertTrue(calculator.isPageStateCorrect());
-
     }
 
-    @Test(description = "Should successfully apply model data to compute engine in cloud platform pricing calculator")
+    @Test(dependsOnMethods = "shouldFindCloudCalculatorOnSearchResults",
+          dataProviderClass = ComputeEngineModelDataProvider.class,
+          dataProvider = "computeEngineModel",
+          description = "Should successfully apply model data to compute engine in cloud platform pricing calculator")
     public void shouldFillComputeEngineFormAndGetEstimate(ComputeEngineModel model)
     {
-        ComputeEnginePage computeEngine = new CalculatorPage().open()
-                .invokeComputeEngine().fillFieldsFromModel(model);
+        computeEngine = new CalculatorPage()
+                .open()
+                .invokeComputeEngine()
+                .fillFieldsFromModel(model);
         
-        Assert.assertTrue(computeEngine.isPageStateCorrect(), 
-                          String.format("Could not deserialize model to compute engine in google cloud calculator.\n" +
-                                        "tried to apply model: %s", model.toString()));
+        Assert.assertTrue(computeEngine.isPageStateCorrect(), String.format("Could not deserialize model %s to compute "
+                + "engine in google cloud calculator", model));
     }
     
+   
     @Test(description = "Tries to create temporary email inbox in 'https://yopmail.com/en/' provider")
     public void shouldCreateTemporaryInbox()
     {
-        InboxPage inbox = new MailProviderPage().open().openInbox();
+        inbox = new MailProviderPage().open().openInbox();
         
         Assert.assertTrue(inbox.isPageStateCorrect(), "Could not create temporary email inbox.");
     }
     
-    @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate", "shouldCreateTemporaryInbox"},
-          dataProviderClass = ComputeEngineModelDataProvider.class)
-    public void shouldFillComputeEngineFormAndSendEmailEstimate(ComputeEngineModel model)
+    @Test(dependsOnMethods = {"shouldCreateTemporaryInbox" , "shouldSendEmailEstimateToEmailAddress"})
+    public void shouldReceiveEmailWithTotalEstimatedCost()
     {
-        SoftAssert softAssert = new SoftAssert();
-
-        ComputeEnginePage computeEngine = new CalculatorPage().open()
-                .invokeComputeEngine().fillFieldsFromModel(model);
-        softAssert.assertTrue(computeEngine.isPageStateCorrect(), 
-                              String.format("Failed to deserialize model: %s to computeEngine.", model));
-       
-        int estimatedCost = computeEngine.clickAddToEstimate()
-                .returnEstimatedCost();
-        softAssert.assertTrue(computeEngine.isPageStateCorrect(), "Failed");
-        InboxPage inbox = new MailProviderPage().open().openInbox();
-        
-        computeEngine = computeEngine.clickEmailEstimate()
-        .enterEmailAddress(inbox.getEmailAddress())
-        .clickSendButton();
-        
-        MailPage mail = inbox.waitForEmailArrival(Duration.ofMillis(2));
+        MailPage mail = inbox.waitForEmailArrival(Duration.ofMinutes(2));
         String mailBody = mail.getMailBody();
         
-        softAssert.assertTrue(mailBody.contains(String.valueOf(estimatedCost)), 
-                              "Email body doesnt contain digit simila to compute engine estimate");
-        softAssert.assertAll();
+        Assert.assertTrue(mailBody.contains(computeEngine.returnEstimatedCost()), "Email body doesnt contain digit simila to compute engine estimate");
+    }
+    
+    @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate", "shouldCreateTemporaryInbox"},
+          dataProviderClass = ComputeEngineModelDataProvider.class,
+          dataProvider = "computeEngineModel")
+    public void shouldSendEmailEstimateToEmailAddress(ComputeEngineModel model)
+    {
+        computeEngine.clickAddToEstimate()
+                     .clickEmailEstimate()
+                     .enterEmailAddress(inbox.getEmailAddress())
+                     .clickSendButton();
+
+        Assert.assertTrue(computeEngine.isPageStateCorrect(), "Failed to send estimate to email address");
     }
 
 }

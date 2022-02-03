@@ -8,9 +8,15 @@ import org.testng.annotations.DataProvider;
 import page.util.IO;
 import service.ComputeEngineModelCreator;
 
+
+//@DataProvider(name = "test1")
+//public Iterator<MyCustomData> createData() {
+//  return Arrays.asList(new MyCustomData()).iterator();
+//}
+
 public class ComputeEngineModelDataProvider
 {
-    @DataProvider(name = "compute engine model")
+    @DataProvider
     public static Object[][] computeEngineModel()
     {
         String environment = System.getProperty("environment", "dev");

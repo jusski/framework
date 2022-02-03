@@ -15,6 +15,7 @@ public class Exceptions
     {
         StringWriter writer = new StringWriter();
         exception.printStackTrace(new PrintWriter(writer, false));
+        
         return writer.toString();
     }
 

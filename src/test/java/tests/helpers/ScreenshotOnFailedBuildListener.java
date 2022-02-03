@@ -1,8 +1,6 @@
 package tests.helpers;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.openqa.selenium.OutputType;
 import org.testng.ITestListener;
@@ -16,13 +14,26 @@ import page.util.IO;
 
 public class ScreenshotOnFailedBuildListener implements ITestListener
 {
-    @SneakyThrows
     @Override
     public void onTestFailure(ITestResult result)
     {
+        takeScreenshot(result);
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result)
+    {
+        if(result.wasRetried())
+        {
+            takeScreenshot(result);
+        }
+    }
+   
+    @SneakyThrows
+    private void takeScreenshot(ITestResult result)
+    {
         File screenshot = Driver.getInstance().getScreenshotAs(OutputType.FILE);
-        String date = DateTimeFormatter.ofPattern("yyyy-MM-dd HH.mm.ss").format(LocalDateTime.now());
-        String filename = "target/screenshots/" + date + result.getMethod() + ".png";
+        String filename = String.format("target/screenshots/%s.png", result.getMethod().getQualifiedName());
         Files.copy(screenshot, IO.createFile(new File(filename)));
     }
 

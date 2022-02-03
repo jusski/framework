@@ -102,7 +102,7 @@ public class EmailEstimateFormPage extends Page
         public InvalidEmailEstimateForm(boolean isValid, ComputeEnginePage parent)
         {
             super(false, parent);
-            // TODO Auto-generated constructor stub
+            log.error("Invalid EmailEstimateForm was created");
         }
 
         @Override

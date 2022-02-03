@@ -25,6 +25,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class Page 
 {
+    private static final int POLLING_DURATION_MILISECONDS = 100;
     protected int TIME_OUT_IN_SECONDS = 15;
     protected Duration TIMEOUT = Duration.ofSeconds(TIME_OUT_IN_SECONDS);
     protected CustomWebDriver driver = Driver.getInstance();
@@ -38,6 +39,7 @@ public class Page
        
     protected void get(String url)
     {
+        log.trace("Opening {} page", url);
         driver.get(url);
         this.URL = url;
     }
@@ -103,7 +105,7 @@ public class Page
     {
        return new FluentWait<WebDriver>(driver)
         .withTimeout(timeout)
-        .pollingEvery(Duration.ofMillis(200))
+        .pollingEvery(Duration.ofMillis(POLLING_DURATION_MILISECONDS))
         .ignoring(NoSuchElementException.class);
     }
     
@@ -135,12 +137,13 @@ public class Page
             scrollIntoView(element);
             if(element.isDisplayed() && element.isEnabled())
             {
+                log.trace("Clicking {}", element);
                 element.click();
             }
             else
             {
                 isValid = false;
-                log.error(String.format("Element: %s is not displayed or enabled", element));
+                log.error("Element: {} is not displayed or enabled", element);
             }
         }
     }
@@ -148,7 +151,8 @@ public class Page
     protected WebElement scrollIntoView(WebElement element)
     {
         if(isValid)
-        {
+        {   
+            log.trace("Scrolling to {}", element);
             driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
         }
         
@@ -159,6 +163,7 @@ public class Page
     {
         if(isValid)
         {
+            log.trace("Scrolling to {}", element);
             driver.executeScript("arguments[0].scrollIntoView();", element);
         }
         

@@ -8,7 +8,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class Driver
 {
     private static CustomWebDriver driver;
-
+   
     
     /**
      * Returns singleton WebDriver instance

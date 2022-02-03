@@ -65,6 +65,10 @@ public class MailPage extends Page
 
     static class InvalidMail extends MailPage
     {
+        public InvalidMail()
+        {
+            log.error("Invalid Mail was created");
+        }
         @Override
         public boolean isPageStateCorrect()
         {

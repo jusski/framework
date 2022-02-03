@@ -5,11 +5,11 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
-import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import page.Page;
 import page.google.cloud.calculator.compute.engine.ComputeEnginePage;
 
-
+@Log4j2
 public class CalculatorPage extends Page
 {
     private final String URL = "https://cloud.google.com/products/calculator";

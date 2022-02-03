@@ -8,9 +8,13 @@ import java.nio.file.PathMatcher;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.io.Files;
+
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 
 
+@Log4j2
 public class IO
 {
 
@@ -50,9 +54,9 @@ public class IO
     {
         try
         {
+            Files.createParentDirs(file);
             if(!file.createNewFile())
             {
-                com.google.common.io.Files.createParentDirs(file);
                
                 String fileParent = file.getParent();
                 String filename = file.getName();
@@ -63,13 +67,14 @@ public class IO
                 int counter = 0;
                 do
                 {
-                    file = new File(String.format("%s%s%s%s", fileParent, name, uniquePostfix, extension));
+                    file = new File(String.format("%s%c%s%s%s", fileParent, File.separatorChar, name, uniquePostfix, extension));
                     uniquePostfix = "(" + ++counter + ")";
                 } while(!file.createNewFile());
             }
         }
         catch(IOException e)
         {
+            log.error("Could not create file with path {}", file);
             Exceptions.rethrowUnchecked(e);
         }
        
