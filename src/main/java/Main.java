@@ -3,13 +3,13 @@ import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import page.google.cloud.calculator.CalculatorPage;
-import page.google.cloud.calculator.compute.engine.ComputeEnginePage;
-import page.google.cloud.calculator.compute.engine.model.ComputeEngineModel;
-import page.mail.InboxPage;
-import page.mail.MailPage;
-import page.mail.MailProviderPage;
-import service.ComputeEngineModelCreator;
+import webdriver.page.google.cloud.calculator.CalculatorPage;
+import webdriver.page.google.cloud.calculator.compute.engine.ComputeEnginePage;
+import webdriver.page.google.cloud.calculator.compute.engine.model.ComputeEngineModel;
+import webdriver.page.mail.InboxPage;
+import webdriver.page.mail.MailPage;
+import webdriver.page.mail.MailProviderPage;
+import webdriver.service.ComputeEngineModelCreator;
 
 
 public class Main

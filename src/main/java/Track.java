@@ -1,23 +1,26 @@
-import org.testng.TestListenerAdapter;
-import org.testng.TestNG;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import tests.SmokeTest;
 
-
+@Data
+@AllArgsConstructor
+class A
+{
+    public Integer a;
+    public String b;
+}
 
 @Log4j2
 public class Track
 {
     public static void main(String[] args)
     {
-        TestListenerAdapter tla = new TestListenerAdapter();
-        TestNG testng = new TestNG();
-        testng.setTestClasses(new Class[] { SmokeTest.class });
-        testng.addListener(tla);
-        testng.run();
-        
-        
+       log.trace("trace");
+       log.warn("warn");
+       log.error("error");
+       log.info("@|KeyStyle {}|@ = @|ValueStyle {}|@", 1,2);
+       
+    
     }
 
 }

@@ -3,7 +3,7 @@
 <suite name="Smoke" verbose="1" >
     <test name="UserAccess">
         <classes >
-            <class name="tests.SmokeTest" />
+            <class name="webdriver.tests.SmokeTest" />
         </classes>
     </test>
 </suite>

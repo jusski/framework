@@ -1,7 +1,7 @@
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 
-import tests.SmokeTest;
+import webdriver.tests.SmokeTest;
 
 public class Runner
 {
