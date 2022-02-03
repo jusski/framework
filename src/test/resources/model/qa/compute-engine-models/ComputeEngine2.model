@@ -1,0 +1,10 @@
+commitedUsage: "1 Year"
+dataCenterLocation: "Frankfurt"
+gpuType: "NVIDIA Tesla V100"
+machineClass: "Regular"
+machineType: "n1-standard-8"
+operatingSystem: "Free"
+series: "N1"
+ssd: "2x375"
+numberOfInstances: 4
+gpuCount: 1
