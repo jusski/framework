@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -53,7 +54,17 @@ public class Driver
             case "chrome":
             {
                 log.trace("Creating chrome webdriver.");
-                WebDriverManager.chromiumdriver().setup();
+                WebDriverManager.chromiumdriver().setup(); 
+                
+                ChromeOptions chromeOptions = new ChromeOptions();
+//                String binary = System.getProperty("browser_binary");
+//                if(binary != null)
+//                {
+//                    log.trace("Setting chrome binary to {}", binary);
+//                    chromeOptions.setBinary(binary);
+//                }
+                
+//                webdriver = new CustomWebDriver(new ChromeDriver(chromeOptions));
                 webdriver = new CustomWebDriver(new ChromeDriver());
             } break;
             case "firefox":

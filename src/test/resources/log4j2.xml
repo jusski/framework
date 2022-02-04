@@ -3,7 +3,7 @@
 	<Appenders>
 		<Console name="Console">
 			<PatternLayout>
-				<Pattern>%highlight{[%-5p]} [%t] - %m%n</Pattern>
+				<Pattern>%highlight{[%-5p]} - %m%n</Pattern>
 			</PatternLayout>
 		</Console>
 		<File name="File" fileName="target/logs/google-cloud-automation.log" append="false">
