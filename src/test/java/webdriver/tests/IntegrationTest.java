@@ -83,7 +83,7 @@ public class IntegrationTest extends AbstractTest
         Assert.assertTrue(mailBody.contains(computeEngine.returnEstimatedCost()), "Email body doesnt contain digit simila to compute engine estimate");
     }
     
-    @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate", "shouldCreateTemporaryInbox"},
+    @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate", "shouldCreateTemporaryInbox"})
     public void shouldSendEmailEstimateToEmailAddress(ComputeEngineModel model)
     {
         computeEngine.clickAddToEstimate()
