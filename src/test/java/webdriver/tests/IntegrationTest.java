@@ -51,8 +51,6 @@ public class IntegrationTest extends AbstractTest
     }
 
     @Test(dependsOnMethods = "shouldFindCloudCalculatorOnSearchResults",
-          dataProviderClass = ComputeEngineModelDataProvider.class,
-          dataProvider = "computeEngineModel",
           description = "Should successfully apply model data to compute engine in cloud platform pricing calculator")
     public void shouldFillComputeEngineFormAndGetEstimate()
     {
@@ -86,8 +84,6 @@ public class IntegrationTest extends AbstractTest
     }
     
     @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate", "shouldCreateTemporaryInbox"},
-          dataProviderClass = ComputeEngineModelDataProvider.class,
-          dataProvider = "computeEngineModel")
     public void shouldSendEmailEstimateToEmailAddress(ComputeEngineModel model)
     {
         computeEngine.clickAddToEstimate()

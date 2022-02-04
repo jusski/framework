@@ -27,7 +27,7 @@ import webdriver.driver.Driver;
 public class Page 
 {
     private static final int POLLING_DURATION_MILISECONDS = 100;
-    protected int TIME_OUT_IN_SECONDS = 15;
+    protected int TIME_OUT_IN_SECONDS = 20;
     protected Duration TIMEOUT = Duration.ofSeconds(TIME_OUT_IN_SECONDS);
     protected CustomWebDriver driver = Driver.getInstance();
     protected FluentWait<WebDriver> fluentWait = sleep();
