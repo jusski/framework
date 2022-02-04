@@ -57,15 +57,15 @@ public class Driver
                 WebDriverManager.chromiumdriver().setup(); 
                 
                 ChromeOptions chromeOptions = new ChromeOptions();
-//                String binary = System.getProperty("browser_binary");
-//                if(binary != null)
-//                {
-//                    log.trace("Setting chrome binary to {}", binary);
-//                    chromeOptions.setBinary(binary);
-//                }
+                String binary = System.getProperty("browser_binary");
+                if(binary != null)
+                {
+                    log.trace("Setting chrome binary to {}", binary);
+                    chromeOptions.setBinary(binary);
+                }
                 
-//                webdriver = new CustomWebDriver(new ChromeDriver(chromeOptions));
-                webdriver = new CustomWebDriver(new ChromeDriver());
+                webdriver = new CustomWebDriver(new ChromeDriver(chromeOptions));
+//                webdriver = new CustomWebDriver(new ChromeDriver());
             } break;
             case "firefox":
             {
