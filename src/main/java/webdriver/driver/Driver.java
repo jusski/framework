@@ -65,7 +65,6 @@ public class Driver
                 }
                 
                 webdriver = new CustomWebDriver(new ChromeDriver(chromeOptions));
-//                webdriver = new CustomWebDriver(new ChromeDriver());
             } break;
             case "firefox":
             {

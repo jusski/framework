@@ -20,6 +20,8 @@ public class IntegrationTest extends AbstractTest
 {
     private InboxPage inbox;
     private ComputeEnginePage computeEngine;
+    private String address;
+    private String password;
    
     private ComputeEngineModel model;
     
@@ -45,7 +47,7 @@ public class IntegrationTest extends AbstractTest
         CalculatorPage calculator = new MainPage()
                                     .open()
                                     .invokeSearch("Google Cloud Platform Pricing Calculator")
-                                    .findResultWithLinkTo("Google Cloud Platform Pricing Calculator", CalculatorPage.class);
+                                    .findResultWithLinkTo("Google Cloud Platform Pricing Calculator", CalculatorPage.class);                                                              
 
         Assert.assertTrue(calculator.isPageStateCorrect());
     }
@@ -70,10 +72,10 @@ public class IntegrationTest extends AbstractTest
         inbox = new MailProviderPage()
                 .open()
                 .openInbox();
-        
+
         Assert.assertTrue(inbox.isPageStateCorrect(), "Could not create temporary email inbox.");
     }
-    
+
     @Test(dependsOnMethods = {"shouldCreateTemporaryInbox" , "shouldSendEmailEstimateToEmailAddress"})
     public void shouldReceiveEmailWithTotalEstimatedCost()
     {

@@ -11,7 +11,7 @@ import webdriver.page.google.cloud.calculator.compute.engine.model.ComputeEngine
 public class ComputeEngineModelCreator
 {
     @SneakyThrows
-    public static ComputeEngineModel withValuesFromYAML(File file)
+    public static ComputeEngineModel withValuesFromProperties(File file)
     {
         ObjectMapper mapper = new ObjectMapper(new JavaPropsFactory());
         return mapper.readValue(file, ComputeEngineModel.class);

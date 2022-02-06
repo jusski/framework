@@ -9,9 +9,11 @@ import org.testng.ITestResult;
 import com.google.common.io.Files;
 
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import webdriver.driver.Driver;
 import webdriver.page.util.IO;
 
+@Log4j2
 public class ScreenshotOnFailedBuildListener implements ITestListener
 {
     @Override
@@ -33,8 +35,15 @@ public class ScreenshotOnFailedBuildListener implements ITestListener
     private void takeScreenshot(ITestResult result)
     {
         File screenshot = Driver.getInstance().getScreenshotAs(OutputType.FILE);
-        String filename = String.format("target/screenshots/%s.png", result.getMethod().getQualifiedName());
+        String filename = String.format("target/screenshots/%s.png", getMethodName(result));
+        log.trace("Screenshot filename is \"{}\"", filename);
         Files.copy(screenshot, IO.createFile(new File(filename)));
+    }
+    
+    private String getMethodName(ITestResult result)
+    {
+        String methodName = result.getMethod().getQualifiedName();
+        return methodName.substring(methodName.lastIndexOf('.') + 1, methodName.length());
     }
 
 }

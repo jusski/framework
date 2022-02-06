@@ -17,7 +17,7 @@ public class Main
     public static void main(String[] args) 
     {
         File file = new File("src/test/resources/model/dev/compute-engine-models/ComputeEngine1.model");
-        ComputeEngineModel model = ComputeEngineModelCreator.withValuesFromYAML(file);
+        ComputeEngineModel model = ComputeEngineModelCreator.withValuesFromProperties(file);
         
         ComputeEnginePage computeEngine = new CalculatorPage().open()
                 .invokeComputeEngine()

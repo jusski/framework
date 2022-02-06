@@ -29,8 +29,8 @@ public class SmokeTest extends AbstractTest
       public void shouldFailToFindSearchTermOnFirstPageOfSearchResults(String searchTerm) 
       {
           Page page = new MainPage().open()
-                  .invokeSearch(searchTerm)
-                  .findResultWithLinkTo(searchTerm, Page.class);
+                      .invokeSearch(searchTerm)
+                      .findResultWithLinkTo(searchTerm, Page.class);
 
           Assert.assertFalse(page.isPageStateCorrect(), "Managed to find valid link to search term: " + searchTerm);
       }

@@ -19,12 +19,12 @@ public class ComputeEngineModelDataProvider
         String environment = System.getProperty("environment", "dev");
         String path = "src/test/resources/model/" + environment + "/compute-engine-models/";
         
-        List<File> files = IO.listFiles(path, "*.model");
+        List<File> files = IO.listFiles(path, "*.model_compute_engine");
         
         ArrayList<ComputeEngineModel> computeEngineModel = new ArrayList<>();
         for(int i = 0; i < files.size(); ++i)
         {
-            computeEngineModel.add(ComputeEngineModelCreator.withValuesFromYAML(files.get(i)));
+            computeEngineModel.add(ComputeEngineModelCreator.withValuesFromProperties(files.get(i)));
         }
         
         return computeEngineModel.toArray(new ComputeEngineModel[0]);
