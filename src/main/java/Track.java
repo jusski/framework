@@ -1,5 +1,7 @@
 import java.time.LocalDateTime;
 
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.xml.internal.Parser;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -20,7 +22,11 @@ public class Track
 {
     public static void main(String[] args)
     {
-        System.out.println(WebDriverManager.chromiumdriver().driverVersion("92.0.4515.107").getBrowserPath());
+        WebDriverManager.chromiumdriver().driverVersion("97.0.4692.71").setup();
+        ChromeDriver driver = new ChromeDriver(new ChromeOptions().setBinary("C:\\Users\\R61\\AppData\\Local\\Chromium\\Application\\chrome.exe"));
+        System.out.println("end");
+        driver.get("https://cloud.google.com/products/calculator");
+        
     }
 
 }
