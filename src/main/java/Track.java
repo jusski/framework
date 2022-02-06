@@ -26,6 +26,7 @@ public class Track
         ChromeDriver driver = new ChromeDriver(new ChromeOptions().setBinary("C:\\Users\\R61\\AppData\\Local\\Chromium\\Application\\chrome.exe"));
         System.out.println("end");
         driver.get("https://cloud.google.com/products/calculator");
+        System.out.println(driver.getTitle());
         
     }
 
