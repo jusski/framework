@@ -54,9 +54,9 @@ public class Driver
             case "chrome":
             {
                 log.trace("Creating chrome webdriver.");
-                WebDriverManager.chromiumdriver().setup(); 
+                WebDriverManager.chromiumdriver().driverVersion("97.0.4692.71").setup(); 
                 
-                ChromeOptions chromeOptions = new ChromeOptions();
+                ChromeOptions chromeOptions = new ChromeOptions().setBinary("C:\\Users\\R61\\AppData\\Local\\Chromium\\Application\\chrome.exe");
                 String binary = System.getProperty("browser_binary");
                 if(binary != null)
                 {
