@@ -36,7 +36,7 @@ pipeline {
                 always 
                 {
                     junit '**/target/surefire-reports/junitreports/TEST-*.xml'
-                    archiveArtifacts allowEmptyArchive: true, 'target/*.jar'
+                   
                 }
             }
         }
