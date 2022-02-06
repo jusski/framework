@@ -20,7 +20,7 @@ public class Track
 {
     public static void main(String[] args)
     {
-        System.out.println(WebDriverManager.chromiumdriver().getBrowserPath());
+        System.out.println(WebDriverManager.chromiumdriver().driverVersion("92.0.4515.107").getBrowserPath());
     }
 
 }
