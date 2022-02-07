@@ -29,13 +29,6 @@ public class MailProviderPage extends Page
 
     public MailProviderPage()
     {
-        this(true);
-    }
-    
-    public MailProviderPage(boolean switchToNewTab)
-    {
-        if(switchToNewTab) driver.switchTo().newWindow(WindowType.TAB);
-
         windowHandle = driver.getWindowHandle();
         emailAddress = UUID.randomUUID().toString().substring(0, 15);
       

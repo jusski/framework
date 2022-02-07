@@ -27,7 +27,7 @@ public class Driver
         if(webdriver == null)
         {
            log.error("Thread local webdriver was null. It should not happen.");
-           webdriver = newInstance();
+          // webdriver = newInstance();
         }
         
         return webdriver;
@@ -38,10 +38,12 @@ public class Driver
         CustomWebDriver webdriver = driversMap.get(id);
         if(webdriver != null)
         {
+            log.trace("Setting thread local driver to id({})", id);
             driver.set(webdriver);
         }
         else
         {
+            log.error("Driver instance for id = " + id + " was not found.");
             throw new RuntimeException("Driver instance for id = " + id + " was not found.");
         }
     }

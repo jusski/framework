@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="broken" verbose="1">
+	<test name="broken test">
+		<groups>
+			<run>
+				<include name="smoke" />
+			</run>
+		</groups>
+
+		<classes>
+			<class name="webdriver.tests.GroupTest" />
+			<class name="webdriver.tests.GroupTest2" />
+		</classes>
+	</test>
+</suite>

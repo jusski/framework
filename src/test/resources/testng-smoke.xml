@@ -1,9 +1,14 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Smoke" verbose="1" >
-    <test name="Smoke Tests">
-        <classes >
-            <class name="webdriver.tests.SmokeTest" />
-        </classes>
-    </test>
+<suite name="Smoke" verbose="1">
+	<test name="cloud platform smoke sests">
+		<groups>
+			<run>
+				<include name="smoke" />
+			</run>
+		</groups>
+		<packages>
+			<package name="webdriver.tests" />
+		</packages>
+	</test>
 </suite>

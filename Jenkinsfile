@@ -15,7 +15,7 @@ pipeline {
     
     stages 
     {
-        stage('Build') 
+        stage('Build') 	
         {
             steps 
             {
@@ -23,7 +23,7 @@ pipeline {
                 git 'https://github.com/jusski/framework.git'
 
                 // Run Maven on a Unix agent.
-                bat "mvn -Dsurefire.suiteXmlFiles=src/test/resources/testng-smoke.xml clean test"
+                bat "mvn --batch-mode -Dsurefire.suiteXmlFiles=src/test/resources/testng-smoke.xml clean test"
 
                 // To run Maven on a Windows agent, use
                 // bat "mvn -Dmaven.test.failure.ignore=true clean package"
@@ -36,6 +36,7 @@ pipeline {
                 always 
                 {
                     junit '**/target/surefire-reports/junitreports/TEST-*.xml'
+                    archiveArtifacts artifacts: 'target/screenshots/*.png', allowEmptyArchive: true, onlyIfSuccessful: true
                    
                 }
             }

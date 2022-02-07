@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
@@ -16,13 +17,11 @@ import webdriver.page.mail.MailPage;
 import webdriver.page.mail.MailProviderPage;
 import webdriver.tests.dataproviders.ComputeEngineModelDataProvider;
 
-public class IntegrationTest extends AbstractTest
+@Test(groups = "cloud-calculator", dependsOnGroups = "mail")
+public class CloudCalculator extends AbstractTest
 {
     private InboxPage inbox;
     private ComputeEnginePage computeEngine;
-    private String address;
-    private String password;
-   
     private ComputeEngineModel model;
     
     @Factory
@@ -31,12 +30,20 @@ public class IntegrationTest extends AbstractTest
         ArrayList<Object> result = new ArrayList<>();
         for(ComputeEngineModel model : ComputeEngineModelDataProvider.computeEngineModel())
         {
-            result.add(new IntegrationTest(model));
+            result.add(new CloudCalculator(model));
         }
         return result.toArray();
     }
     
-    public IntegrationTest(ComputeEngineModel model)
+    @BeforeClass
+    public void createTemporaryInbox()
+    {
+        inbox = new MailProviderPage()
+                .open()
+                .openInbox();
+    }
+    
+    public CloudCalculator(ComputeEngineModel model)
     {
         this.model = model;
     }
@@ -65,18 +72,8 @@ public class IntegrationTest extends AbstractTest
                 + "engine in google cloud calculator", model));
     }
     
-   
-    @Test(description = "Tries to create temporary email inbox in 'https://yopmail.com/en/' provider")
-    public void shouldCreateTemporaryInbox()
-    {
-        inbox = new MailProviderPage()
-                .open()
-                .openInbox();
 
-        Assert.assertTrue(inbox.isPageStateCorrect(), "Could not create temporary email inbox.");
-    }
-
-    @Test(dependsOnMethods = {"shouldCreateTemporaryInbox" , "shouldSendEmailEstimateToEmailAddress"})
+    @Test(dependsOnMethods = {"shouldSendEmailEstimateToEmailAddress"})
     public void shouldReceiveEmailWithTotalEstimatedCost()
     {
         MailPage mail = inbox.waitForEmailArrival(Duration.ofMinutes(2));
@@ -85,7 +82,7 @@ public class IntegrationTest extends AbstractTest
         Assert.assertTrue(mailBody.contains(computeEngine.returnEstimatedCost()), "Email body doesnt contain digit simila to compute engine estimate");
     }
     
-    @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate", "shouldCreateTemporaryInbox"})
+    @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate"})
     public void shouldSendEmailEstimateToEmailAddress(ComputeEngineModel model)
     {
         computeEngine.clickAddToEstimate()

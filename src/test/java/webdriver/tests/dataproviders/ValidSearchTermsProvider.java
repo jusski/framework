@@ -12,15 +12,10 @@ public class ValidSearchTermsProvider
 {
     @SneakyThrows
     @DataProvider
-    public static Object[][] validSearchTerms()
+    public static Object[] validSearchTerms()
     {
-        List<String> validTerms = Files.readAllLines(Paths.get("src/test/resources/model/dev/searching/ValidSearchTerm.data"));
-        Object[][] validSearchTerms = new Object[validTerms.size()][1];
-        
-        for(int i = 0; i < validTerms.size(); ++i)
-        {
-            validSearchTerms[i][0] = validTerms.get(i);
-        }
-        return validSearchTerms;
+        String path = "src/test/resources/model/dev/searching/ValidSearchTerm.data";
+        List<String> validTerms = Files.readAllLines(Paths.get(path));
+        return validTerms.toArray();
     }
 }
