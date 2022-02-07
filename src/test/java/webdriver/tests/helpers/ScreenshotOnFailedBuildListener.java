@@ -1,6 +1,8 @@
 package webdriver.tests.helpers;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.openqa.selenium.OutputType;
 import org.testng.ITestListener;
@@ -35,7 +37,9 @@ public class ScreenshotOnFailedBuildListener implements ITestListener
     private void takeScreenshot(ITestResult result)
     {
         File screenshot = Driver.getInstance().getScreenshotAs(OutputType.FILE);
-        String filename = String.format("target/screenshots/%s.png", getMethodName(result));
+        
+        String timeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH.mm.ss").format(LocalDateTime.now());
+        String filename = String.format("target/screenshots/[%s] %s.png", timeFormat, getMethodName(result));
         log.trace("Screenshot filename is \"{}\"", filename);
         Files.copy(screenshot, IO.createFile(new File(filename)));
     }
