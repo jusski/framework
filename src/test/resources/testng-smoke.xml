@@ -1,7 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="Smoke" verbose="1">
-	<test name="cloud platform smoke sests">
+	<test name="cloud platform smoke tests">
 		<groups>
 			<run>
 				<include name="smoke" />

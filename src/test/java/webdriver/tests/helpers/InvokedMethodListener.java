@@ -14,7 +14,7 @@ public class InvokedMethodListener implements IInvokedMethodListener
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult, ITestContext context)
     {
-        Integer driverId = (Integer)context.getSuite().getAttribute("driverId");
+        Integer driverId = (Integer)context.getAttribute("driverId");
         if(driverId != null)
         {
             log.trace("DriverId = {}", driverId);

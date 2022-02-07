@@ -26,16 +26,15 @@ public abstract class AbstractTest
     }
    
     @BeforeClass(alwaysRun = true)
-    public void beforeSuite(ITestContext context)
+    public void beforeClass(ITestContext context)
     {
         log.trace("set context driverId ({})", id);
-        context.getSuite().setAttribute("driverId", id);
         context.setAttribute("driverId", id);
         Driver.newInstance(id);
     }
     
     @AfterClass(alwaysRun = true)
-    public void afterSuite(ITestContext context)
+    public void afterClass(ITestContext context)
     {
         Driver.shutdown(id);
         context.removeAttribute("driverId");
