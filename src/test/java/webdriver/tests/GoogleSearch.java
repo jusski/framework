@@ -11,7 +11,18 @@ import webdriver.tests.dataproviders.ValidSearchTermsProvider;
 @Test(groups = {"cloud-calculator"})
 public class GoogleSearch extends AbstractTest
 {
-    @Test(dataProviderClass = ValidSearchTermsProvider.class, dataProvider = "validSearchTerms", description = "Should find link to valid search term on 1 page in search results of google.cloud page")
+    @Test(groups = "smoke",
+          description = "Smoke test to opening main search page")
+    public void shouldOpenMainSearchPage()
+    {
+        Page page = new MainPage().open();
+        
+        Assert.assertTrue(page.isPageStateCorrect(), "Could not open main search page.");
+    }
+    
+    @Test(dataProviderClass = ValidSearchTermsProvider.class, 
+          dataProvider = "validSearchTerms", 
+          description = "Should find link to valid search term on 1 page in search results of google.cloud page")
     public void shouldFindSearchTermOnFirstPageOfSearchResults(String searchTerm)
     {
         Page page = new MainPage().open()
@@ -21,7 +32,9 @@ public class GoogleSearch extends AbstractTest
         Assert.assertTrue(page.isPageStateCorrect(), "Could not find link to valid search term: " + searchTerm);
     }
 
-    @Test(dataProviderClass = InValidSearchTermsProvider.class, dataProvider = "inValidSearchTerms", description = "Should fail to find link to random search term on 1 page in search results of google.cloud page")
+    @Test(dataProviderClass = InValidSearchTermsProvider.class, 
+          dataProvider = "inValidSearchTerms", 
+          description = "Should fail to find link to random search term on 1 page in search results of google.cloud page")
     public void shouldFailToFindSearchTermOnFirstPageOfSearchResults(String searchTerm)
     {
         Page page = new MainPage().open()

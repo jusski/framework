@@ -16,7 +16,7 @@ public class Mail extends AbstractTest
                           .open()
                           .openInbox();
 
-        Assert.assertTrue(inbox.isPageStateCorrect(), "Could not create temporary email inbox.");
+        Assert.assertFalse(inbox.isPageStateCorrect(), "Could not create temporary email inbox.");
     }
 
 }
