@@ -20,7 +20,6 @@ public abstract class AbstractTest
     
     public AbstractTest()
     {
-        //We can use also System.identityHashCode(this) for id;
         id = classInstanceId.getAndIncrement();
         log.trace("classInstanceId = {}", id);
     }

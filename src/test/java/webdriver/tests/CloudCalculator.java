@@ -20,9 +20,9 @@ import webdriver.tests.dataproviders.ComputeEngineModelDataProvider;
 @Test(groups = "cloud-calculator")
 public class CloudCalculator extends AbstractTest
 {
-    private InboxPage inbox;
-    private ComputeEnginePage computeEngine;
-    private ComputeEngineModel model;
+    InboxPage inbox;
+    ComputeEnginePage computeEngine;
+    ComputeEngineModel model;
     CalculatorPage calculator;
     
     @Factory

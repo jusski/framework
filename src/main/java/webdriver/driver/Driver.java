@@ -56,21 +56,33 @@ public class Driver
         {
             case "chrome":
             {
+                ChromeOptions chromeOptions;
                 log.trace("Creating chrome webdriver.");
-                WebDriverManager.chromiumdriver().driverVersion("97.0.4692.71").setup(); 
-                
-                ChromeOptions chromeOptions = new ChromeOptions()
-                        .setBinary("C:\\Users\\R61\\AppData\\Local\\Chromium\\Application\\chrome.exe")
-                        .setHeadless(false);
-                        
+                       
                 String binary = System.getProperty("browser_binary");
-                if(binary != null)
+                String version = System.getProperty("browser_version");
+                if(binary != null && version != null)
                 {
                     log.trace("Setting chrome binary to {}", binary);
-                    chromeOptions.setBinary(binary);
+                    log.trace("Setting chrome version to {}", version);
+                    WebDriverManager.chromiumdriver().driverVersion(version).setup(); 
+                    
+                    chromeOptions = new ChromeOptions()
+                            .setBinary(binary)
+                            .setHeadless(false);
+                    
+                }
+                else
+                {
+                    WebDriverManager.chromiumdriver().driverVersion("97.0.4692.71").setup(); 
+                    
+                    chromeOptions = new ChromeOptions()
+                            .setBinary("C:\\Users\\R61\\AppData\\Local\\Chromium\\Application\\chrome.exe")
+                            .setHeadless(false);
                 }
                 
                 webdriver = new CustomWebDriver(new ChromeDriver(chromeOptions));
+                
             } break;
             case "firefox":
             {

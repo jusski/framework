@@ -103,9 +103,9 @@ public class Page
     protected FluentWait<WebDriver> sleep(Duration timeout)
     {
        return new FluentWait<WebDriver>(driver)
-        .withTimeout(timeout)
-        .pollingEvery(Duration.ofMillis(POLLING_DURATION_MILISECONDS))
-        .ignoring(NoSuchElementException.class);
+               .withTimeout(timeout)
+               .pollingEvery(Duration.ofMillis(POLLING_DURATION_MILISECONDS))
+               .ignoring(NoSuchElementException.class);
     }
     
     protected boolean isUrlBeginningWith(String url)
