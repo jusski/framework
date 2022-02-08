@@ -1,9 +1,10 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="mailing" verbose="1" >
+<suite name="mailing" verbose="10" >
     <test name="mail Tests">
         <classes >
             <class name="webdriver.tests.CloudCalculator" />
+            <class name="webdriver.tests.Mail" />
         </classes>
     </test>
 </suite>

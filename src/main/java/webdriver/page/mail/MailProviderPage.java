@@ -37,7 +37,7 @@ public class MailProviderPage extends Page
 
     public MailProviderPage open()
     {
-        navigateTo(URL);
+        newTabOpenURL(URL);
         cookiesBannerAcceptButton.click();
         emailAddressInput.click();
         emailAddressInput.sendKeys(emailAddress);

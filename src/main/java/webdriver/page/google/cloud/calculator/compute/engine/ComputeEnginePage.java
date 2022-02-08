@@ -16,6 +16,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import lombok.extern.log4j.Log4j2;
 import webdriver.page.Page;
+import webdriver.page.google.cloud.calculator.compute.engine.EmailEstimateFormPage.InvalidEmailEstimateForm;
 import webdriver.page.google.cloud.calculator.compute.engine.model.ComputeEngineModel;
 import webdriver.page.util.Exceptions;
 
@@ -71,6 +72,9 @@ public class ComputeEnginePage extends Page
     
     @FindBy(css = "#compute b.ng-binding")
     WebElement totalEstimatedCostText;
+    
+    @FindBy(css = "form[name='emailForm']")
+    WebElement emailForm;
 
     @FindBy(css = "div.md-select-menu-container.md-active")
     WebElement selectMenuContainer;
@@ -261,11 +265,12 @@ public class ComputeEnginePage extends Page
                 scrollIntoViewAndClick(dataCenterLocationSelect);
                 clickSelectionMenuOption(value);
             }
-            catch(NoSuchElementException | TimeoutException e)
+            catch(ElementClickInterceptedException | NoSuchElementException | TimeoutException e)
             {
                 log.error(String.format("When invoking with parameter [%s], exception was caught: %s", value, Exceptions.printStackTraceToString(e)));
+                throw e;
 
-                return new InvalidComputeEngine();
+                //return new InvalidComputeEngine();
             }
         }
         return this;
@@ -300,6 +305,7 @@ public class ComputeEnginePage extends Page
             {
                 if(element.getText().contains(value))
                 {
+                    log.trace("Found element in options menu with value {}", value);
                     scrollIntoViewAndClick(element);
                     waitFor(() -> selectMenuContainerOptions.isEmpty());
                     return;
@@ -310,6 +316,7 @@ public class ComputeEnginePage extends Page
         {
             throw new NoSuchElementException(String.format("Could not find %s element in selection menu options", value));
         }
+        log.error("Somehow we got here. This should not have happened (clickSelectionMenuOption");
     }
 
     public ComputeEnginePage clickAddToEstimate()
@@ -362,6 +369,8 @@ public class ComputeEnginePage extends Page
             try
             {
                 scrollIntoViewAndClick(emailestimateButton);
+                waitFor(() -> isDisplayed(emailForm));
+                return new EmailEstimateFormPage(isValid, this);
             }
             catch(NoSuchElementException | ElementClickInterceptedException e)
             {
@@ -369,13 +378,14 @@ public class ComputeEnginePage extends Page
                 isValid = false;
             }
         }
-        return new EmailEstimateFormPage(isValid, this);
+        return new InvalidEmailEstimateForm(false, this);
     }
 
     @Override
     public boolean isPageAttributesCorrect()
     {
         return isIFrameCorrect() &&
+               driver.getCurrentUrl().startsWith(URL) &&
                computeEngineBlock.isDisplayed();
     }
     

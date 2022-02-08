@@ -35,23 +35,19 @@ public class Page
   
     protected int frameId = driver.getFrameId();
     public boolean isValid = true;
-    
-    private String URL = driver.getCurrentUrl();
-    
-       
-    protected void navigateTo(String url)
+   
+    protected void newTabOpenURL(String url)
     {
-        log.trace("Opening {} page", url);
+        log.trace("Opening {} page in new browser tab.", url);
         driver.switchTo().newWindow(WindowType.TAB);
         driver.get(url);
-        this.URL = url;
+        this.windowHandle = driver.getWindowHandle();
     }
     
     public boolean isPageStateCorrect()
     {
         return isValid && 
                isBrowserWindowCorrect() &&
-               driver.getCurrentUrl().startsWith(URL) &&
                isPageAttributesCorrect();
     }
     

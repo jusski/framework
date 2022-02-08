@@ -55,8 +55,7 @@ public class SearchResultsPage extends Page
     @Override
     protected boolean isPageAttributesCorrect()
     {
-        return driver.getTitle()
-                .startsWith("Search results");
+        return driver.getTitle().startsWith("Search results");
     }
 
 }

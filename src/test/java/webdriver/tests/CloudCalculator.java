@@ -17,12 +17,13 @@ import webdriver.page.mail.MailPage;
 import webdriver.page.mail.MailProviderPage;
 import webdriver.tests.dataproviders.ComputeEngineModelDataProvider;
 
-@Test(groups = "cloud-calculator", dependsOnGroups = "mail")
+@Test(groups = "cloud-calculator")
 public class CloudCalculator extends AbstractTest
 {
     private InboxPage inbox;
     private ComputeEnginePage computeEngine;
     private ComputeEngineModel model;
+    CalculatorPage calculator;
     
     @Factory
     public static Object[] integrationTestFactory()
@@ -51,10 +52,10 @@ public class CloudCalculator extends AbstractTest
     @Test(description = "Should successfully open cloud platform pricing calulator link")
     public void shouldFindCloudCalculatorOnSearchResults()
     {
-        CalculatorPage calculator = new MainPage()
-                                    .open()
-                                    .invokeSearch("Google Cloud Platform Pricing Calculator")
-                                    .findResultWithLinkTo("Google Cloud Platform Pricing Calculator", CalculatorPage.class);                                                              
+        calculator = new MainPage()
+                     .open()
+                     .invokeSearch("Google Cloud Platform Pricing Calculator")
+                     .findResultWithLinkTo("Google Cloud Platform Pricing Calculator", CalculatorPage.class);                                                              
 
         Assert.assertTrue(calculator.isPageStateCorrect());
     }
@@ -63,10 +64,8 @@ public class CloudCalculator extends AbstractTest
           description = "Should successfully apply model data to compute engine in cloud platform pricing calculator")
     public void shouldFillComputeEngineFormAndGetEstimate()
     {
-        computeEngine = new CalculatorPage()
-                        .open()
-                        .invokeComputeEngine()
-                        .fillFieldsFromModel(model);
+        computeEngine = calculator.invokeComputeEngine()
+                                  .fillFieldsFromModel(model);
         
         Assert.assertTrue(computeEngine.isPageStateCorrect(), String.format("Could not deserialize model %s to compute "
                 + "engine in google cloud calculator", model));
@@ -83,7 +82,7 @@ public class CloudCalculator extends AbstractTest
     }
     
     @Test(dependsOnMethods = {"shouldFillComputeEngineFormAndGetEstimate"})
-    public void shouldSendEmailEstimateToEmailAddress(ComputeEngineModel model)
+    public void shouldSendEmailEstimateToEmailAddress()
     {
         computeEngine.clickAddToEstimate()
                      .clickEmailEstimate()

@@ -16,7 +16,7 @@ import webdriver.page.Page;
 @Log4j2
 public class EmailEstimateFormPage extends Page
 {
-    String URL = "https://cloud.google.com/products/calculator#id";
+    String URL = "https://cloud.google.com/products/calculator/#id";
     ComputeEnginePage parent;
     
     @FindBy(css = "form[name='emailForm']")
@@ -76,6 +76,7 @@ public class EmailEstimateFormPage extends Page
     public boolean isPageAttributesCorrect()
     {
         return isIFrameCorrect() &&
+               driver.getCurrentUrl().startsWith(URL) &&
                emailForm.isDisplayed();
     }
     

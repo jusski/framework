@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverLogLevel;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -27,7 +28,7 @@ public class Driver
         if(webdriver == null)
         {
            log.error("Thread local webdriver was null. It should not happen.");
-          // webdriver = newInstance();
+           webdriver = newInstance();
         }
         
         return webdriver;
@@ -61,6 +62,7 @@ public class Driver
                 ChromeOptions chromeOptions = new ChromeOptions()
                         .setBinary("C:\\Users\\R61\\AppData\\Local\\Chromium\\Application\\chrome.exe")
                         .setHeadless(false);
+                        
                 String binary = System.getProperty("browser_binary");
                 if(binary != null)
                 {

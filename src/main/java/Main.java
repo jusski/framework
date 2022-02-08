@@ -3,6 +3,7 @@ import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import webdriver.driver.Driver;
 import webdriver.page.google.cloud.calculator.CalculatorPage;
 import webdriver.page.google.cloud.calculator.compute.engine.ComputeEnginePage;
 import webdriver.page.google.cloud.calculator.compute.engine.model.ComputeEngineModel;
@@ -16,8 +17,11 @@ public class Main
 {
     public static void main(String[] args) 
     {
-        File file = new File("src/test/resources/model/dev/compute-engine-models/ComputeEngine1.model");
+        File file = new File("src/test/resources/model/dev/compute-engine-models/ComputeEngine1.model_compute_engine");
         ComputeEngineModel model = ComputeEngineModelCreator.withValuesFromProperties(file);
+        
+        Driver.newInstance(0);
+        Driver.setThreadLocalDriver(0);
         
         ComputeEnginePage computeEngine = new CalculatorPage().open()
                 .invokeComputeEngine()
@@ -40,6 +44,8 @@ public class Main
        
         
         System.out.println(mailBody.contains(estimatedCost));
+        
+        Driver.shutdown(0);
 
     }
 

@@ -40,7 +40,13 @@ public class MainPage extends Page
     
     public MainPage open()
     {
-        navigateTo(URL);
+        newTabOpenURL(URL);
         return this;
+    }
+    
+    @Override
+    protected boolean isPageAttributesCorrect()
+    {
+        return driver.getCurrentUrl().startsWith(URL);
     }
 }

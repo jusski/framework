@@ -22,6 +22,9 @@ public class CalculatorPage extends Page
     
     @FindBy(css = "#myFrame")
     WebElement mainFrame;
+    
+    @FindBy(css = "button.devsite-snackbar-action")
+    WebElement cookieButton;
 
     public CalculatorPage() 
     {
@@ -32,6 +35,7 @@ public class CalculatorPage extends Page
     {
         if(isPageStateCorrect())
         {
+            cookieButton.click();
             driver.switchTo().frame(outerFrame);
             driver.switchTo().frame(mainFrame);
             computeEngine.click();
@@ -44,9 +48,15 @@ public class CalculatorPage extends Page
     
     public CalculatorPage open()
     {
-        navigateTo(URL);
-        
+        newTabOpenURL(URL);
+       
         return this;
+    }
+    
+    @Override
+    protected boolean isPageAttributesCorrect()
+    {
+        return driver.getCurrentUrl().startsWith(URL);
     }
 
 }
